@@ -66,6 +66,7 @@ test('opens and closes the purchase cheque dialog', async ({ page }) => {
 });
 
 test('animates input labels and aligns the lookup search icon', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('loginStatus', 'LoggedIn'));
   await page.goto('/master/tax');
   const input = page.locator('#cgst_perc');
   const label = page.locator('label[for="cgst_perc"]');

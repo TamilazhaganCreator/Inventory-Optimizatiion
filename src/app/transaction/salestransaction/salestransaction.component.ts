@@ -684,7 +684,7 @@ export class SalestransactionComponent implements OnInit {
       html2canvas(data, { scale: 2 }).then(canvas => {
         const contentDataURL = canvas.toDataURL('image/png')
         let pdf = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
-        pdf.addImage(contentDataURL, 'PNG', 0, 0, 210, canvas.height * 210 / canvas.width)
+        pdf.addImage(contentDataURL, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight())
         let date = this.salesHeader.invoiceDate.getDate() + "/" + (this.salesHeader.invoiceDate.getMonth() + 1) + "/" + this.salesHeader.invoiceDate.getFullYear()
         pdf.save("SALES - " + this.salesHeader.customerName + "- Invoice_no_" + this.salesHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
           this.billShow = false

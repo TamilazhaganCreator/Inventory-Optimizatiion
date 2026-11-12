@@ -692,7 +692,7 @@ export class PurchaseComponent implements OnInit {
         // Few necessary setting options
         const contentDataURL = canvas.toDataURL('image/png')
         let pdf = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
-        pdf.addImage(contentDataURL, 'PNG', 0, 0, 210, canvas.height * 210 / canvas.width)
+        pdf.addImage(contentDataURL, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight())
         let date = this.purchaseHeader.invoiceDate.getDate() + "/" + (this.purchaseHeader.invoiceDate.getMonth() + 1) + "/" + this.purchaseHeader.invoiceDate.getFullYear()
         pdf.save("PURCHASE - " + this.purchaseHeader.supplierName + "- Invoice_No_" + this.purchaseHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
           this.billShow = false

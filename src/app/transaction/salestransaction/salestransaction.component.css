@@ -139,19 +139,90 @@
   .pad-left-38{
     padding-left: 38% !important;
   }
-/* Keep each label/value pair on one row in html2canvas's layout engine. */
+/* Export layout uses physical page dimensions, independent of the viewport. */
+#bill.invoice-a4 {
+  box-sizing: border-box;
+  width: 210mm;
+  height: 297mm;
+  padding: 4mm;
+  color: #000;
+  background: #fff;
+  font-size: 10pt;
+}
+#bill .bill-hdr h4 { clear: both; }
+#bill .phone { font-size: 9pt; margin-right: 1mm; }
+
+/* Float columns only paint borders to their content height. Stretch the
+   invoice's bordered sections so dividers reach both horizontal borders. */
+#bill .bill-sub-hdr,
+#bill .bill-customer-dtl,
+#bill .bill-supplier-dtl,
+#bill .bill-table-hdr,
+#bill .bill-items,
+#bill .bill-table-footer,
+#bill .bill-footer {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+#bill .bill-sub-hdr::after,
+#bill .bill-customer-dtl::after,
+#bill .bill-supplier-dtl::after,
+#bill .bill-table-hdr::after,
+#bill .bill-items::after,
+#bill .bill-table-footer::after,
+#bill .bill-footer::after {
+  display: none;
+}
+#bill .bill-supplier-dtl { height: 35mm; overflow: hidden; }
+#bill .bill-items { height: 108mm; }
+#bill .bill-items .bill-dtl { height: 100%; }
+#bill .bill-sub-hdr > .col.s1,
+#bill .bill-table-hdr > .col.s4,
+#bill .bill-items > .col.s4 {
+  display: flex;
+  align-items: stretch;
+}
+#bill .bill-sub-hdr > .col,
+#bill .bill-customer-dtl > .col,
+#bill .bill-supplier-dtl > .col,
+#bill .bill-table-hdr > .col,
+#bill .bill-items > .col,
+#bill .bill-table-footer > .col,
+#bill .bill-footer > .col {
+  float: none;
+  flex-shrink: 0;
+  min-width: 0;
+}
 #bill .bill-table-footer > .col.s5 {
   display: flex;
   flex-wrap: wrap;
-  align-content: flex-start;
+  align-content: stretch;
   padding-left: 0;
 }
 #bill .bill-table-footer > .col.s5 > .col.s6 {
   float: none;
   flex: 0 0 50%;
   width: 50%;
+  height: calc(100% / 6);
   padding: 6px 4px;
   line-height: 1.2;
 }
-#bill .bill-hdr h4 { clear: both; }
-#bill { background: white; }
+
+#bill .bill-sub-hdr { line-height: 1.15; }
+/* Center the text inside full-height cells, keeping their borders stretched. */
+#bill .bill-sub-hdr > .col:not(.s1),
+#bill .bill-sub-hdr > .col.s1 > .col {
+  display: flex;
+  align-items: center;
+}
+#bill .bill-sub-hdr > .center-align { justify-content: center; }
+#bill .bill-sub-hdr > .right-align { justify-content: flex-end; }
+#bill .bill-footer > .col.s7 {
+  font-size: 9pt;
+  line-height: 1.3;
+}
+#bill .bill-footer > .col.s7 > .col.s3 { width: 35%; }
+#bill .bill-footer > .col.s7 > .col.s9 { width: 65%; }

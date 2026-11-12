@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('loginStatus', 'LoggedIn'));
+});
+
 const routes = [
   '/master/customer', '/master/supplier', '/master/item', '/master/tax',
   '/transaction/sales', '/transaction/purchase', '/transaction/payments',
@@ -97,3 +101,40 @@ test('Materialize lookup, loader, validation, and modal footer states', async ({
   await expect(modal.locator('#bank-name')).toHaveCSS('outline-style', 'none');
   await page.screenshot({ path: testInfo.outputPath('cheque-dialog.png') });
 });
+
+for (const route of ['/transaction/sales', '/transaction/purchase']) {
+  for (const width of [1440, 768]) {
+    test(`transaction confirmation dialog ${route} at ${width}px`, async ({ page }, testInfo) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(route);
+      await page.addStyleTag({ content: '#loader { display: none !important; }' });
+      await page.getByText('CLEAR', { exact: true }).click();
+      const modal = page.getByRole('dialog', { name: 'Clear all', exact: true });
+      await expect(modal).toBeVisible();
+      await expect(modal).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+      const bounds = (await modal.boundingBox())!;
+      const header = (await modal.locator('.modal-header-second').boundingBox())!;
+      const content = (await modal.locator('.modal-content > div').first().boundingBox())!;
+      const no = modal.getByRole('button', { name: 'No', exact: true });
+      const yes = modal.getByRole('button', { name: 'Yes', exact: true });
+      const noBounds = (await no.boundingBox())!;
+      const yesBounds = (await yes.boundingBox())!;
+      expect(bounds.width).toBeLessThanOrEqual(560);
+      expect(bounds.x).toBeGreaterThanOrEqual(16);
+      expect(Math.round(content.x - bounds.x)).toBe(24);
+      expect(Math.round(content.y - header.y - header.height)).toBe(24);
+      expect(Math.round(yesBounds.x - noBounds.x - noBounds.width)).toBe(8);
+      expect(Math.round(bounds.x + bounds.width - yesBounds.x - yesBounds.width)).toBe(24);
+      await page.screenshot({ path: testInfo.outputPath('confirmation.png'), animations: 'disabled' });
+      await no.click();
+      await expect(modal).toBeHidden();
+      await page.locator('select[materialize="material_select"]').first().selectOption('2');
+      const cheque = page.getByRole('dialog', { name: 'Cheque details', exact: true });
+      await expect(cheque).toBeVisible();
+      expect((await cheque.boundingBox())!.width).toBeLessThanOrEqual(560);
+      await expect(cheque.locator('#bank-name')).toBeVisible();
+      await cheque.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(cheque).toBeHidden();
+    });
+  }
+}

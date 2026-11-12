@@ -36,11 +36,11 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    // if (localStorage.getItem('loginStatus') == "LoggedIn") {
+    if (localStorage.getItem('loginStatus') == "LoggedIn") {
       this.loggedIn = true
-    // } else {
-    //   this.loggedIn = false
-    // }
+    } else {
+      this.loggedIn = false
+    }
   }
 
   masterNavigate(route: string) {

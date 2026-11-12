@@ -253,3 +253,46 @@ select[materialize="material_select"] { display: block; }
 .dropdown-content { min-width: 160px; }
 
 .ag-cell.negative-balance { color: #c62828; }
+
+/* Transaction dialogs use the existing Materialize header/content/footer layout.
+   Keep grid auto-margins out of flex dialogs and group actions on the right. */
+.modal.transaction-modal {
+  --modal-border-radius: 4px;
+  width: calc(100% - 2rem);
+  max-width: 560px;
+  max-height: calc(100dvh - 2rem);
+  background: #fff;
+}
+.modal.transaction-modal::backdrop {
+  background: rgba(0, 0, 0, .4);
+  backdrop-filter: none;
+}
+.transaction-modal .modal-header-second {
+  flex-shrink: 0;
+  padding: 20px 24px;
+}
+.transaction-modal .modal-header-title {
+  margin: 0;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1.4;
+}
+.transaction-modal .modal-content {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 24px;
+  overflow-y: auto;
+}
+.transaction-modal .modal-footer {
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #fff;
+  border-top: 1px solid #e0e0e0;
+}
+.transaction-modal .modal-footer .btn-flat {
+  flex: 0 0 auto;
+  color: #00897b;
+}
