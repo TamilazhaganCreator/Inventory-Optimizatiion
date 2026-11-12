@@ -83,6 +83,49 @@ for (const invoice of [
       return value.getBoundingClientRect().bottom <= element.getBoundingClientRect().bottom;
     });
     expect(unclipped).toBe(true);
+    const measurements = await page.locator('#bill').evaluate(element => {
+      const mm = 96 / 25.4;
+      const page = element.getBoundingClientRect();
+      const sections = ['.bill-sub-hdr', '.bill-customer-dtl', '.bill-supplier-dtl',
+        '.bill-table-hdr', '.bill-items', '.bill-table-footer'];
+      const gaps = sections.flatMap(selector => {
+        const section = element.querySelector(selector);
+        if (!section) return [];
+        const bounds = section.getBoundingClientRect();
+        const style = getComputedStyle(section);
+        const top = bounds.top + parseFloat(style.borderTopWidth);
+        const bottom = bounds.bottom - parseFloat(style.borderBottomWidth);
+        return [...section.children].filter(child => child.classList.contains('col'))
+          .map(child => {
+            const box = child.getBoundingClientRect();
+            return Math.max(Math.abs(box.top - top), Math.abs(box.bottom - bottom));
+          });
+      });
+      const totals = element.querySelector('.bill-table-footer > .col.s5')!;
+      const lastTotal = totals.lastElementChild!.getBoundingClientRect();
+      return {
+        widthMm: page.width / mm, heightMm: page.height / mm, gaps,
+        totalsGap: Math.abs(lastTotal.bottom - totals.getBoundingClientRect().bottom),
+        frameBottom: element.firstElementChild!.getBoundingClientRect().bottom - page.top,
+        pageHeight: page.height,
+        overflows: sections.flatMap(selector => {
+          const section = element.querySelector(selector);
+          if (!section) return [];
+          const bounds = section.getBoundingClientRect();
+          return [...section.children].map(child => {
+            const box = child.getBoundingClientRect();
+            return Math.max(bounds.left - box.left, box.right - bounds.right);
+          });
+        }),
+      };
+    });
+    expect(measurements.widthMm).toBeCloseTo(210, 1);
+    expect(measurements.heightMm).toBeCloseTo(297, 1);
+    expect(Math.max(...measurements.gaps)).toBeLessThan(1);
+    expect(Math.max(...measurements.overflows)).toBeLessThan(1);
+    expect(measurements.totalsGap).toBeLessThan(1);
+    expect(measurements.frameBottom).toBeLessThan(measurements.pageHeight);
+
     const download = await downloadPromise;
     expect(download.suggestedFilename()).toMatch(new RegExp(`^${invoice.prefix}.*\\.pdf$`));
     const output = testInfo.outputPath(`${invoice.prefix.toLowerCase()}-invoice.pdf`);

@@ -195,10 +195,10 @@
       <a class="thickdarkbluebutton" (click)="endProcess()">{{purchaseHeader.id? 'Print':'Submit'}}</a>
     </div>
   </div>
-  <dialog id="modal1" class="modal" style="width:36%;" materialize="modal" [materializeActions]="chqModalAction"
+  <dialog id="modal1" class="modal transaction-modal" aria-labelledby="cheque-modal-title" materialize="modal" [materializeActions]="chqModalAction"
     [materializeParams]="chqModalParams">
     <div class="modal-header-second">
-      <h5 class="modal-header-title" style="display:inline-block;">Cheque details</h5>
+      <h5 id="cheque-modal-title" class="modal-header-title">Cheque details</h5>
     </div>
     <div class="modal-content">
       <div class="row no-margin-bottom">
@@ -231,19 +231,19 @@
       </div>
     </div>
     <div class="modal-footer" style="border-top:1px solid rgba(0,0,0,0.1)">
-      <a [ngClass]="{'disabled':purchaseHeader.id}" #clearChqButton class="modal-action modal-close btn btn-flat"
-        (click)="clearChqDetails()">Cancel</a>
-      <a [ngClass]="{'disabled':purchaseHeader.id}" #saveChqButton class="modal-action btn btn-flat"
-        (click)="saveChqDetails()">Save</a>
+      <button type="button" [ngClass]="{'disabled':purchaseHeader.id}" #clearChqButton class="modal-action modal-close btn btn-flat"
+        (click)="clearChqDetails()">Cancel</button>
+      <button type="button" [ngClass]="{'disabled':purchaseHeader.id}" #saveChqButton class="modal-action btn btn-flat"
+        (click)="saveChqDetails()">Save</button>
     </div>
   </dialog>
-  <dialog id="modal2" class="modal" materialize="modal" [materializeActions]="confirmationModal"
+  <dialog id="modal2" class="modal transaction-modal confirmation-modal" aria-labelledby="confirmation-modal-title" materialize="modal" [materializeActions]="confirmationModal"
     [materializeParams]="confirmationModalParams">
     <div class="modal-header-second">
-      <h5 class="modal-header-title" style="display:inline-block;padding-top:2.4%;padding-bottom: 2.4%">
+      <h5 id="confirmation-modal-title" class="modal-header-title">
         {{confimationModalHeader}}</h5>
     </div>
-    <div class="modal-content row no-margin-bottom">
+    <div class="modal-content">
       <div *ngIf="confimationModalHeader != 'Delete'">
         Are you sure want to {{confimationModalHeader.toLowerCase()}} ?
       </div>
@@ -253,31 +253,34 @@
       </div>
     </div>
     <div class="modal-footer">
-      <a class="modal-action modal-close btn btn-flat">No</a>
-      <a class="modal-action modal-close btn btn-flat" (click)="yesButtonProcess()">Yes</a>
+      <button type="button" class="modal-action modal-close btn btn-flat">No</button>
+      <button type="button" class="modal-action modal-close btn btn-flat" (click)="yesButtonProcess()">Yes</button>
     </div>
   </dialog>
 </div>
 <generic-lov></generic-lov>
-<div id="bill" *ngIf="billShow" style="color:black;width: 210mm;height: 297mm;padding: 16px;font-size: .9rem;">
+<div id="bill" class="invoice-a4" *ngIf="billShow">
   <div class="row no-margin-bottom" style="border:1px solid black">
     <div class="row no-margin-bottom center-align bill-hdr">
       <div style="margin-top: .3rem;">
         <div class="col s6 offset-s3" style="font-size:.75rem;margin-top:.4rem;">
-          Sri Ayyanar Thunai
+          Sri Periyanayaki Amman Thunai
         </div>
         <div class="col s3">
           <div class="col s12 right-align valign-wrapper pad-left-38">
             <i class="material-icons phone">phone</i>
-            9360517871</div>
+            8015402264</div>
           <div style="visibility:hidden" class="col s12 right-align valign-wrapper pad-left-38">
             <i class="material-icons phone">phone</i>
-            9080537678</div>
+            8015172264</div>
         </div>
       </div>
       <h4 style="font-weight:500;margin-top:0">Yugan Industries</h4>
       <div>
         Office: 8-F8, 8th Floor, Tower-8, Crown Residences, Poonamallee High Road, Koyambedu, Chennai-600107
+      </div>
+      <div style="color:white">
+        Factory: Madhavaram, Chennai-60
       </div>
       <div>
         Email: yuganindustriesofficial@gmail.com
@@ -330,7 +333,7 @@
         <div class="col s6" style="padding: 8px;border-left: 1px solid black">Total</div>
       </div>
     </div>
-    <div class="row center-align no-margin-bottom">
+    <div class="row center-align no-margin-bottom bill-items">
       <div class="col s1 bill-dtl">
         <div class="col s12 nopad bill-item-dtl" *ngFor="let item of purchaseDetails;let _index = index">
           {{_index + 1}}
