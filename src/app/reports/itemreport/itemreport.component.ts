@@ -1,5 +1,6 @@
+import { ColDef } from 'ag-grid-community';
+import { ChangeDetectionStrategy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
-import { HotTableRegisterer } from '@handsontable/angular';
 import { GlobalService } from 'src/app/global.service';
 import { ItemModel } from 'src/app/master/master.model';
 import { ItemFilterModel } from '../report.model';
@@ -8,6 +9,8 @@ import { ArrayDescSortPipe } from './../../utils/sortdesc.pipe';
 import { ReportService } from './../report.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-itemreport',
   templateUrl: './itemreport.component.html',
   styleUrls: ['./itemreport.component.css']
@@ -23,49 +26,37 @@ export class ItemreportComponent implements OnInit {
 
   constructor(private global: GlobalService, private service: ReportService) { }
 
-  private hotRegisterer = new HotTableRegisterer();
-  hotSettings: Handsontable.GridSettings = {
-    data: this.itemDetails,
-    columns: [
-      {
-        data: 'code',
-        type: 'numeric',
-        readOnly: true,
-        className: "htCenter"
-      },
-      {
-        data: 'name',
-        type: 'numeric',
-        readOnly: true
-      },
-      {
-        data: 'stock',
-        type: 'numeric',
-        readOnly: true
-      },
-      {
-        data: 'sales',
-        type: 'numeric',
-        readOnly: true
-      },
-      {
-        data: 'purchase',
-        type: 'numeric',
-        readOnly: true
-      }],
-    rowHeaders: true,
-    colHeaders: [
-      'ITEM CODE',
-      'ITEM NAME',
-      'STOCK',
-      'SALES',
-      'PURCHASE'
-    ],
-    filters: true,
-    height: 440,
-    stretchH: 'all',
-    rowHeights: 24,
-  }
+  columns: ColDef[] = [
+    {
+        "field": "code",
+        "headerName": "ITEM CODE",
+        "type": "numericColumn",
+        "filter": "agNumberColumnFilter"
+    },
+    {
+        "field": "name",
+        "headerName": "ITEM NAME",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "stock",
+        "headerName": "STOCK",
+        "type": "numericColumn",
+        "filter": "agNumberColumnFilter"
+    },
+    {
+        "field": "sales",
+        "headerName": "SALES",
+        "type": "numericColumn",
+        "filter": "agNumberColumnFilter"
+    },
+    {
+        "field": "purchase",
+        "headerName": "PURCHASE",
+        "type": "numericColumn",
+        "filter": "agNumberColumnFilter"
+    }
+];
 
   ngOnInit() {
     setTimeout(() => {
@@ -84,7 +75,7 @@ export class ItemreportComponent implements OnInit {
         index++;
       })
       this.backupItemDetails = this.itemDetails.map(d => Object.assign({}, d))
-      this.hotRegisterer.getInstance("hot").loadData(this.itemDetails);
+
       this.setTotalAmt()
       setTimeout(() => {
         this.global.loader = false
@@ -105,19 +96,20 @@ export class ItemreportComponent implements OnInit {
     if (this.filter.sortType) {
       let typeSplits = this.filter.sortType.split("_")
       if (typeSplits[1] == "asc")
-        this.itemDetails = new ArrayAscSortPipe().transform(this.itemDetails, typeSplits[0])
+        this.itemDetails = [...new ArrayAscSortPipe().transform(this.itemDetails, typeSplits[0])]
       else
-        this.itemDetails = new ArrayDescSortPipe().transform(this.itemDetails, typeSplits[0])
+        this.itemDetails = [...new ArrayDescSortPipe().transform(this.itemDetails, typeSplits[0])]
       filtered = true
     }
     if (filtered) {
-      this.hotRegisterer.getInstance("hot").loadData(this.itemDetails);
+
       this.setTotalAmt()
       this.global.showToast("Items filtered", "success", false)
     }
   }
 
   setTotalAmt() {
+    this.itemDetails = [...this.itemDetails];
     this.totalPurchase = this.itemDetails.map(i => i.purchase).reduce((a, b) => a + b, 0)
     this.totalSales = this.itemDetails.map(i => i.sales).reduce((a, b) => a + b, 0)
     this.totalStock = this.itemDetails.map(i => i.stock).reduce((a, b) => a + b, 0)
@@ -126,7 +118,7 @@ export class ItemreportComponent implements OnInit {
   clearFilter() {
     this.filter = new ItemFilterModel()
     this.itemDetails = this.backupItemDetails.map(d => Object.assign({}, d))
-    this.hotRegisterer.getInstance("hot").loadData(this.itemDetails);
+
     this.setTotalAmt()
     this.global.showToast("Filter cleared", "success", false)
   }

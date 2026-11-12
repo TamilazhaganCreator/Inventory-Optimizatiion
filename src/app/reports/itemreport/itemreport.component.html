@@ -5,7 +5,7 @@
       <label for="item">Enter an Item Name</label>
     </div>
     <div class="input-field col s3" style="margin-top:0">
-      <select materialize="material_select" [(ngModel)]="filter.sortType">
+      <select materialize="material_select" [ngModel]="filter.sortType ?? ''" (ngModelChange)="filter.sortType = $event">
         <option value="" disabled selected>Sort Type </option>
         <option value="stock_asc">Stock Asc</option>
         <option value="stock_desc">Stock Desc</option>
@@ -22,7 +22,7 @@
       <a class="thickdarkbluebutton" (click)="clearFilter()">Clear</a>
     </div>
   </div>
-  <hot-table [settings]="hotSettings" hotId="hot"></hot-table>
+  <app-report-grid [rows]="itemDetails" [columns]="columns"></app-report-grid>
 </div>
 <div class="row no-margin-bottom bg" id="footer-div">
   <div class="col s12 nopad valign-wrapper">

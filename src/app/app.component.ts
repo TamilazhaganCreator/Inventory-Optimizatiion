@@ -1,9 +1,12 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 import { GlobalService } from './global.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
@@ -17,7 +20,7 @@ export class AppComponent implements OnInit {
   masterComponents = ["customer", "item", "supplier", "tax"]
   transactionComponents = ["sales", "purchase", "payments"]
   reportComponents = ["sales", "purchase", "items", "customer", "supplier", "payments", "person-wise"]
-  @ViewChild("routerArea") routerArea: ElementRef;
+  @ViewChild("routerArea", { static: false }) routerArea: ElementRef;
 
   constructor(public global: GlobalService, private router: Router, private auth: AuthService) {
     this.router.events.forEach((event) => {
@@ -33,11 +36,11 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (localStorage.getItem('loginStatus') == "LoggedIn") {
+    // if (localStorage.getItem('loginStatus') == "LoggedIn") {
       this.loggedIn = true
-    } else {
-      this.loggedIn = false
-    }
+    // } else {
+    //   this.loggedIn = false
+    // }
   }
 
   masterNavigate(route: string) {

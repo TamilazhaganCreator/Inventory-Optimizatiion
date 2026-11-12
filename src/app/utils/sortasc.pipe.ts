@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
+  standalone: false,
   name: "sort-asc"
 })
 export class ArrayAscSortPipe implements PipeTransform {

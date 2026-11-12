@@ -1,9 +1,10 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, ElementRef, EventEmitter, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MaterializeAction } from 'angular2-materialize';
-import * as html2canvas from 'html2canvas';
-import * as jspdf from 'jspdf';
+import { MaterializeAction } from '../../ui/materialize.module';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 import { Subscription } from 'rxjs';
 import { GenericLovService } from 'src/app/genericlov/genericlov.service';
 import { GlobalService } from 'src/app/global.service';
@@ -13,6 +14,8 @@ import { TransactionService } from '../transaction.service';
 import { MasterService } from './../../master/master.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-salestransaction',
   templateUrl: './salestransaction.component.html',
   styleUrls: ['./salestransaction.component.css'],
@@ -68,12 +71,12 @@ export class SalestransactionComponent implements OnInit {
   @ViewChildren("quantityInputs") private quantityInputs: QueryList<any>;
   @ViewChildren("unitInputs") private unitInputs: QueryList<any>;
   @ViewChildren("spInputs") private spInputs: QueryList<any>;
-  @ViewChild("clearChqButton") private clearChqButton: ElementRef;
-  @ViewChild("saveChqButton") private saveChqButton: ElementRef;
-  @ViewChild("invoiceNoInput") private invoiceNoInput: ElementRef;
-  @ViewChild("otherChargesInput") private otherChargesInput: ElementRef;
-  @ViewChild("paidAmtInput") private paidAmtInput: ElementRef;
-  @ViewChild("custNameInput") private custNameInput: ElementRef;
+  @ViewChild("clearChqButton", { static: false }) private clearChqButton: ElementRef;
+  @ViewChild("saveChqButton", { static: false }) private saveChqButton: ElementRef;
+  @ViewChild("invoiceNoInput", { static: false }) private invoiceNoInput: ElementRef;
+  @ViewChild("otherChargesInput", { static: false }) private otherChargesInput: ElementRef;
+  @ViewChild("paidAmtInput", { static: false }) private paidAmtInput: ElementRef;
+  @ViewChild("custNameInput", { static: false }) private custNameInput: ElementRef;
   private alphaNumericRegex: RegExp = /^[a-zA-Z0-9\/._-]*$/
   private tenNumberWithTwoDigitsFormatRegex: RegExp = /^\d{0,10}(?:\.\d{0,2})?$/;
   billShow: boolean = false
@@ -146,6 +149,7 @@ export class SalestransactionComponent implements OnInit {
               this.masterService.getItem("customermaster", temHeader.customerCode.toString())
                 .subscribe((cust) => {
                   let customer = cust.data() as CustomerModel
+                  temHeader.customerAddress = customer.address
                   temHeader.customerGSTNo = customer.gstNo
                   temHeader.customerAmt = customer.amount
                   temHeader.customerLocation = customer.location
@@ -679,10 +683,8 @@ export class SalestransactionComponent implements OnInit {
       var data = document.getElementById('bill');
       html2canvas(data, { scale: 2 }).then(canvas => {
         const contentDataURL = canvas.toDataURL('image/png')
-        let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF
-        var position = 0;
-        pdf.internal.scaleFactor = 5.66
-        pdf.addImage(contentDataURL, 'PNG', 0, 0)
+        let pdf = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
+        pdf.addImage(contentDataURL, 'PNG', 0, 0, 210, canvas.height * 210 / canvas.width)
         let date = this.salesHeader.invoiceDate.getDate() + "/" + (this.salesHeader.invoiceDate.getMonth() + 1) + "/" + this.salesHeader.invoiceDate.getFullYear()
         pdf.save("SALES - " + this.salesHeader.customerName + "- Invoice_no_" + this.salesHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
           this.billShow = false

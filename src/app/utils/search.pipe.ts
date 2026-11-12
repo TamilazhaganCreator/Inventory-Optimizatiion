@@ -1,6 +1,7 @@
 import { PipeTransform, Pipe, Injectable } from '@angular/core';
 
 @Pipe({
+  standalone: false,
     name: 'search'
 })
 @Injectable()

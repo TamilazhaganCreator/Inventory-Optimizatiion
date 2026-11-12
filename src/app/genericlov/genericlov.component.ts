@@ -1,6 +1,6 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import { UnitModel } from './../master/master.model';
 import { Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { toast } from 'angular2-materialize';
 import { Subscription } from 'rxjs';
 import { ItemModel, CustomerModel, TaxModel } from '../master/master.model';
 import { SearchPipe } from '../utils/search.pipe';
@@ -10,6 +10,8 @@ import { GlobalService } from '../global.service';
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
     selector: 'generic-lov',
     templateUrl: 'genericlov.component.html',
     styleUrls: ['genericlov.component.css']
@@ -23,8 +25,8 @@ export class GenericLovComponent {
     loaderShow: boolean = false
     tableRowSelectedIndex: number = 0
     tableRowSelected: boolean[] = []
-    @ViewChild("lovSearchTag") private LovSearchInput: ElementRef;
-    @ViewChild("itemsModal") private itemsModal;
+    @ViewChild("lovSearchTag", { static: false }) private LovSearchInput: ElementRef;
+    @ViewChild("itemsModal", { static: false }) private itemsModal;
     @ViewChildren("lovTableRow") private itemsTableRow;
     private subscription: Subscription[] = []
     allItems: any[] = []

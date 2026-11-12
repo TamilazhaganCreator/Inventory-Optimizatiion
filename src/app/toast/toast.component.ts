@@ -1,9 +1,12 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import { transition, animate, style, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { GlobalService } from '../global.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
     selector: 'toast-component',
     styleUrls: [
         './toast.component.css'

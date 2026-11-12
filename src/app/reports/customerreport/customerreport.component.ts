@@ -1,14 +1,16 @@
+import { ColDef } from 'ag-grid-community';
+import { ChangeDetectionStrategy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
-import { HotTableRegisterer } from '@handsontable/angular';
 import { GlobalService } from 'src/app/global.service';
 import { CustomerModel } from 'src/app/master/master.model';
 import { ArrayAscSortPipe } from './../../utils/sortasc.pipe';
 import { ArrayDescSortPipe } from './../../utils/sortdesc.pipe';
 import { ReportService } from './../report.service';
 import { PersonFilterModel } from '../report.model';
-import * as Handsontable from 'handsontable';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-customerreport',
   templateUrl: './customerreport.component.html',
   styleUrls: ['./customerreport.component.css']
@@ -22,45 +24,28 @@ export class CustomerreportComponent implements OnInit {
 
   constructor(private global: GlobalService, private service: ReportService) { }
 
-  private hotRegisterer = new HotTableRegisterer();
-  hotSettings: Handsontable.GridSettings = {
-    data: this.customerDetails,
-    columns: [
-      {
-        data: 'code',
-        type: 'numeric',
-        readOnly: true,
-        className: "htCenter"
-      },
-      {
-        data: 'name',
-        type: 'numeric',
-        readOnly: true
-      },
-      {
-        data: 'amount',
-        type: 'numeric',
-        readOnly: true,
-        className: "htRight",
-        renderer: function (instance, td, row, col, prop, value, cellProperties) {
-          Handsontable.renderers.TextRenderer.apply(this, arguments);
-          if (parseInt(value, 10) < 0) {
-            td.style.color = "red"
-          }
-          return td;
+  columns: ColDef[] = [
+    {
+        "field": "code",
+        "headerName": "CUSTOMER CODE",
+        "type": "numericColumn",
+        "filter": "agNumberColumnFilter"
+    },
+    {
+        "field": "name",
+        "headerName": "CUSTOMER NAME",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "amount",
+        "headerName": "AMOUNT",
+        "type": "numericColumn",
+        "filter": "agNumberColumnFilter",
+        "cellClassRules": {
+            "negative-balance": (params) => Number(params.value) < 0
         }
-      }],
-    rowHeaders: true,
-    colHeaders: [
-      'CUSTOMER CODE',
-      'CUSTOMER NAME',
-      'AMOUNT'
-    ],
-    filters: true,
-    height: 440,
-    stretchH: 'all',
-    rowHeights: 24
-  }
+    }
+];
 
   ngOnInit() {
     setTimeout(() => {
@@ -79,7 +64,7 @@ export class CustomerreportComponent implements OnInit {
         index++;
       })
       this.backupCustomerDetails = this.customerDetails.map(d => Object.assign({}, d))
-      this.hotRegisterer.getInstance("hot").loadData(this.customerDetails);
+
       this.setTotalAmt()
       setTimeout(() => {
         this.global.loader = false
@@ -109,26 +94,27 @@ export class CustomerreportComponent implements OnInit {
     if (this.filter.sortType) {
       let typeSplits = this.filter.sortType.split("_")
       if (typeSplits[1] == "asc")
-        this.customerDetails = new ArrayAscSortPipe().transform(this.customerDetails, typeSplits[0])
+        this.customerDetails = [...new ArrayAscSortPipe().transform(this.customerDetails, typeSplits[0])]
       else
-        this.customerDetails = new ArrayDescSortPipe().transform(this.customerDetails, typeSplits[0])
+        this.customerDetails = [...new ArrayDescSortPipe().transform(this.customerDetails, typeSplits[0])]
       filtered = true
     }
     if (filtered) {
-      this.hotRegisterer.getInstance("hot").loadData(this.customerDetails);
+
       this.setTotalAmt()
       this.global.showToast("Customers filtered", "success", false)
     }
   }
 
   setTotalAmt() {
+    this.customerDetails = [...this.customerDetails];
     this.totalAmt = this.customerDetails.map(i => i.amount).reduce((a, b) => a + b, 0)
   }
 
   clearFilter() {
     this.filter = new PersonFilterModel()
     this.customerDetails = this.backupCustomerDetails.map(d => Object.assign({}, d))
-    this.hotRegisterer.getInstance("hot").loadData(this.customerDetails);
+
     this.setTotalAmt()
     this.global.showToast("Filter cleared", "success", false)
   }

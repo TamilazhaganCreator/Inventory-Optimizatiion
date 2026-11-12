@@ -127,4 +127,19 @@
   .table-row-selected {
     background-color: #d9f0f5;
   }
-  
+
+/* Reserve a separate icon column for both the value and its floating label. */
+.input-field.lov-search-field .prefix {
+    left: .75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0;
+    pointer-events: none;
+}
+.input-field.lov-search-field input,
+.input-field.lov-search-field input:focus:not([readonly]) {
+    padding-left: 3rem;
+}
+.input-field.lov-search-field > label {
+    left: 3rem;
+}

@@ -1,8 +1,11 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { GlobalService } from 'src/app/global.service';
 import { UnitModel } from '../master.model';
 import { MasterService } from '../master.service';
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-unitmaster',
   templateUrl: './unitmaster.component.html',
   styleUrls: ['./unitmaster.component.css']

@@ -1,6 +1,7 @@
+import { ColDef } from 'ag-grid-community';
+import { ChangeDetectionStrategy } from '@angular/core';
 import { ArrayAscSortPipe } from './../../utils/sortasc.pipe';
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import { HotTableRegisterer } from '@handsontable/angular';
 import { CollapsibleMaterializeAction } from 'src/app/global.model';
 import { GlobalService } from 'src/app/global.service';
 import { ReportService } from '../report.service';
@@ -11,6 +12,8 @@ import { Subscription } from 'rxjs';
 import { CustomerModel } from 'src/app/master/master.model';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-payments',
   templateUrl: './payments.component.html',
   styleUrls: ['./payments.component.css']
@@ -22,54 +25,38 @@ export class PaymentsComponent implements OnInit {
   paymentDetails: CashPaymentModel[] = []
   personType = null;
   totalAmt = 0;
-  private hotRegisterer = new HotTableRegisterer();
-  private subscriptionArray: Subscription[] = []
-  hotSettings: Handsontable.GridSettings = {
-    data: this.paymentDetails,
-    columns: [
-      {
-        data: 'dateString',
-        type: 'text',
-        className: "htCenter",
-        readOnly: true
-      },
-      {
-        data: 'note',
-        type: 'numeric',
-        readOnly: true,
-        className: "htCenter"
-      },
-      {
-        data: 'name',
-        type: 'text',
-        readOnly: true
-      },
-      {
-        data: 'paymentType',
-        type: 'numeric',
-        readOnly: true,
-        className: "htCenter"
-      },
-      {
-        data: 'amount',
-        type: 'numeric',
-        readOnly: true,
-        className: "htCenter"
-      }
-    ],
-    rowHeaders: true,
-    colHeaders: [
-      'DATE',
-      'NOTES',
-      'NAME',
-      'PAYMENT TYPE',
-      'Amount'
-    ],
-    filters: true,
-    height: 440,
-    stretchH: 'all',
-    rowHeights: 24
-  };
+  private subscriptionArray: Subscription[] = [];
+  columns: ColDef[] = [
+    {
+        "field": "dateString",
+        "headerName": "DATE",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "note",
+        "headerName": "NOTES",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "name",
+        "headerName": "NAME",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "paymentType",
+        "headerName": "PAYMENT TYPE",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "amount",
+        "headerName": "Amount",
+        "type": "numericColumn",
+        "filter": "agNumberColumnFilter",
+        "cellClassRules": {
+            "negative-balance": (params) => Number(params.value) < 0
+        }
+    }
+  ];
 
   constructor(private global: GlobalService, private service: ReportService,
     private lovService: GenericLovService) {
@@ -173,7 +160,7 @@ export class PaymentsComponent implements OnInit {
   clearFilter() {
     this.filter = new FilterModel()
     this.paymentDetails = []
-    this.hotRegisterer.getInstance("hot").loadData(this.paymentDetails)
+
     this.totalAmt = 0
     this.filterCollapsible.emit({ action: 'collapsible', params: ['close', 0] });
     this.global.showToast("Filters cleared", "success", false)
@@ -181,9 +168,10 @@ export class PaymentsComponent implements OnInit {
 
   private assignData() {
     this.setDateString();
+    this.paymentDetails = [...this.paymentDetails];
     this.filterCollapsible.emit({ action: 'collapsible', params: ['close', 0] });
     this.totalAmt = this.roundOff(this.paymentDetails.map(p => p.amount).reduce((a, b) => a + b, 0))
-    this.hotRegisterer.getInstance("hot").loadData(this.paymentDetails);
+
   }
 
   roundOff(value): number {

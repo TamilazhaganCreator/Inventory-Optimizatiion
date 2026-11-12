@@ -1,3 +1,4 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { GenericLovService } from 'src/app/genericlov/genericlov.service';
@@ -7,6 +8,8 @@ import { MasterService } from '../master.service';
 import { TaxModel } from './../master.model';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-itemmaster',
   templateUrl: './itemmaster.component.html',
   styleUrls: ['./itemmaster.component.css', '../master.component.css']
@@ -15,10 +18,10 @@ export class ItemmasterComponent implements OnInit {
 
   currentItem: ItemModel = new ItemModel()
   private subscriptions: Subscription[] = []
-  @ViewChild("spInput") private spInput: ElementRef;
-  @ViewChild("nameInput") private nameInput: ElementRef;
-  @ViewChild("taxInput") private taxInput: ElementRef;
-  @ViewChild("stockInput") private stockInput: ElementRef;
+  @ViewChild("spInput", { static: false }) private spInput: ElementRef;
+  @ViewChild("nameInput", { static: false }) private nameInput: ElementRef;
+  @ViewChild("taxInput", { static: false }) private taxInput: ElementRef;
+  @ViewChild("stockInput", { static: false }) private stockInput: ElementRef;
 
 
   constructor(private global: GlobalService, private service: MasterService, private lovService: GenericLovService) {

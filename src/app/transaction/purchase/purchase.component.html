@@ -23,13 +23,13 @@
             No</label>
         </div>
         <div class="input-field col s3 margin-top-0">
-          <input autocomplete="off" type="text" class="datepicker" materialize="pickadate"
+          <input autocomplete="off" id="invoice-date" type="text" class="datepicker" materialize="pickadate"
             [materializeParams]="invoiceDatePickerParams" [value]="purchaseHeader.invoiceDate | date:'dd/MM/yyyy'"
             (input)="setInvoiceDate($event)" [readOnly]="purchaseHeader.id">
           <label for="invoice-date" [ngClass]="{'actives': purchaseHeader.invoiceDate != null}">Invoice Date</label>
         </div>
         <div class="col s3" *ngIf="paymentTypeShow && !purchaseHeader.id">
-          <select materialize="material_select" [value]="purchaseHeader.paymentType" (change)="setPaymentType($event)">
+          <select materialize="material_select" [value]="purchaseHeader.paymentType ?? ''" (change)="setPaymentType($event)">
             <option value="" disabled selected>Payment Type </option>
             <option value="0">Credit</option>
             <option value="1">Cash</option>
@@ -195,7 +195,7 @@
       <a class="thickdarkbluebutton" (click)="endProcess()">{{purchaseHeader.id? 'Print':'Submit'}}</a>
     </div>
   </div>
-  <div id="modal1" class="modal" style="width:36%;" materialize="modal" [materializeActions]="chqModalAction"
+  <dialog id="modal1" class="modal" style="width:36%;" materialize="modal" [materializeActions]="chqModalAction"
     [materializeParams]="chqModalParams">
     <div class="modal-header-second">
       <h5 class="modal-header-title" style="display:inline-block;">Cheque details</h5>
@@ -226,18 +226,18 @@
           <input autocomplete="off" autocomplete="off" id="chqAmt" type="text"
             [value]="purchaseHeader.chqAmt?purchaseHeader.chqAmt:''" (input)="checkNumberValue($event,'chqAmt')"
             class="margin-zero" maxlength="10" [readOnly]="purchaseHeader.id">
-          <label id="chqAmt" for="chNo" [ngClass]="{'actives': purchaseHeader.chqAmt}">Cheque Amount</label>
+          <label for="chqAmt" [ngClass]="{'actives': purchaseHeader.chqAmt}">Cheque Amount</label>
         </div>
       </div>
     </div>
     <div class="modal-footer" style="border-top:1px solid rgba(0,0,0,0.1)">
-      <a [ngClass]="{'disabled':purchaseHeader.id}" #clearChqButton class="modal-action modal-close  btn-flat"
+      <a [ngClass]="{'disabled':purchaseHeader.id}" #clearChqButton class="modal-action modal-close btn btn-flat"
         (click)="clearChqDetails()">Cancel</a>
-      <a [ngClass]="{'disabled':purchaseHeader.id}" #saveChqButton class="modal-action  btn-flat"
+      <a [ngClass]="{'disabled':purchaseHeader.id}" #saveChqButton class="modal-action btn btn-flat"
         (click)="saveChqDetails()">Save</a>
     </div>
-  </div>
-  <div id="modal2" class="modal" materialize="modal" [materializeActions]="confirmationModal"
+  </dialog>
+  <dialog id="modal2" class="modal" materialize="modal" [materializeActions]="confirmationModal"
     [materializeParams]="confirmationModalParams">
     <div class="modal-header-second">
       <h5 class="modal-header-title" style="display:inline-block;padding-top:2.4%;padding-bottom: 2.4%">
@@ -253,10 +253,10 @@
       </div>
     </div>
     <div class="modal-footer">
-      <a class="modal-action modal-close btn-flat">No</a>
-      <a class="modal-action modal-close  btn-flat" (click)="yesButtonProcess()">Yes</a>
+      <a class="modal-action modal-close btn btn-flat">No</a>
+      <a class="modal-action modal-close btn btn-flat" (click)="yesButtonProcess()">Yes</a>
     </div>
-  </div>
+  </dialog>
 </div>
 <generic-lov></generic-lov>
 <div id="bill" *ngIf="billShow" style="color:black;width: 210mm;height: 297mm;padding: 16px;font-size: .9rem;">

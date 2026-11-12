@@ -5,14 +5,14 @@
       <label for="item">Enter a Customer Name</label>
     </div>
     <div class="input-field col s2" style="margin-top:0">
-      <select materialize="material_select" [(ngModel)]="filter.amountType">
+      <select materialize="material_select" [ngModel]="filter.amountType ?? ''" (ngModelChange)="filter.amountType = $event">
         <option value="" disabled selected>Customer Type </option>
         <option value="credit">Credit</option>
         <option value="debit">Debit</option>
       </select>
     </div>
     <div class="input-field col s2" style="margin-top:0">
-      <select materialize="material_select" [(ngModel)]="filter.sortType">
+      <select materialize="material_select" [ngModel]="filter.sortType ?? ''" (ngModelChange)="filter.sortType = $event">
         <option value="" disabled selected>Sort Type </option>
         <option value="amount_asc">Amount Asc</option>
         <option value="amount_desc">Amount Desc</option>
@@ -25,7 +25,7 @@
       <a class="thickdarkbluebutton" (click)="clearFilter()">Clear</a>
     </div>
   </div>
-  <hot-table [settings]="hotSettings" hotId="hot"></hot-table>
+  <app-report-grid [rows]="customerDetails" [columns]="columns"></app-report-grid>
 </div>
 <div class="row no-margin-bottom bg" id="footer-div">
   <div class="col s12 nopad center-align">

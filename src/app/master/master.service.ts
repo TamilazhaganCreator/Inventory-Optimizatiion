@@ -1,14 +1,15 @@
+import { from } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { FirebaseService } from '../firebase.service';
 import { HsnModel, ItemModel, UnitModel, CustomerModel, TaxModel } from './master.model';
 
 @Injectable()
 export class MasterService {
 
-  constructor(public db: AngularFirestore) { }
+  constructor(public db: FirebaseService) { }
 
   updateTax(value: TaxModel) {
-    return this.db.collection('taxmaster').doc(value.code.toString()).update({
+    return this.db.firestore.collection('taxmaster').doc(value.code.toString()).update({
       cgst_perc: value.cgst_perc,
       sgst_perc: value.sgst_perc,
       igst_perc: value.igst_perc,
@@ -18,7 +19,7 @@ export class MasterService {
 
 
   addTax(value: TaxModel) {
-    return this.db.collection('taxmaster').doc(value.code.toString()).set({
+    return this.db.firestore.collection('taxmaster').doc(value.code.toString()).set({
       code: value.code,
       cgst_perc: value.cgst_perc,
       sgst_perc: value.sgst_perc,
@@ -28,7 +29,7 @@ export class MasterService {
   }
 
   addUnit(value: UnitModel) {
-    return this.db.collection('unitmaster').doc(value.code.toString()).set({
+    return this.db.firestore.collection('unitmaster').doc(value.code.toString()).set({
       name: value.name,
       type: value.type,
       unit: value.unit,
@@ -37,7 +38,7 @@ export class MasterService {
   }
 
   addItem(value: ItemModel) {
-    return this.db.collection('itemmaster').doc(value.code.toString()).set({
+    return this.db.firestore.collection('itemmaster').doc(value.code.toString()).set({
       name: value.name,
       code: value.code,
       sp: value.sp,
@@ -56,7 +57,7 @@ export class MasterService {
   }
 
   updateItem(value: ItemModel) {
-    return this.db.collection('itemmaster').doc(value.code.toString()).update({
+    return this.db.firestore.collection('itemmaster').doc(value.code.toString()).update({
       name: value.name,
       code: value.code,
       sp: value.sp,
@@ -75,7 +76,7 @@ export class MasterService {
   }
 
   addCustomer(collection: string, value: CustomerModel) {
-    return this.db.collection(collection).doc(value.code.toString()).set({
+    return this.db.firestore.collection(collection).doc(value.code.toString()).set({
       name: value.name,
       code: value.code,
       address: value.address,
@@ -89,7 +90,7 @@ export class MasterService {
   }
 
   updateCustomer(collection: string, value: CustomerModel) {
-    return this.db.collection(collection).doc(value.code.toString()).set({
+    return this.db.firestore.collection(collection).doc(value.code.toString()).set({
       name: value.name,
       code: value.code,
       address: value.address,
@@ -104,7 +105,7 @@ export class MasterService {
 
 
   addHsn(value: HsnModel) {
-    return this.db.collection('hsnmaster').doc(value.id.toString()).set({
+    return this.db.firestore.collection('hsnmaster').doc(value.id.toString()).set({
       code: value.code,
       taxPercentage: value.taxPercentage,
       id: value.id
@@ -112,11 +113,11 @@ export class MasterService {
   }
 
   getAllItems(collection,field) {
-    return this.db.collection(collection).ref.orderBy(field).get()
+    return this.db.firestore.collection(collection).orderBy(field).get()
   }
 
   updateUnit(value: UnitModel) {
-    return this.db.collection('unitmaster').doc(value.code.toString()).update({
+    return this.db.firestore.collection('unitmaster').doc(value.code.toString()).update({
       name: value.name,
       type: value.type,
       unit: value.unit,
@@ -125,7 +126,7 @@ export class MasterService {
   }
 
   updateHsn(value: HsnModel) {
-    return this.db.collection('hsnmaster').doc(value.id.toString()).update({
+    return this.db.firestore.collection('hsnmaster').doc(value.id.toString()).update({
       code: value.code,
       taxPercentage: value.taxPercentage,
       id: value.id
@@ -133,11 +134,11 @@ export class MasterService {
   }
 
   deleteItem(collection, id: string) {
-    return this.db.collection(collection).doc(id).delete()
+    return this.db.firestore.collection(collection).doc(id).delete()
   }
 
   getItem(collection, id: string) {
-    return this.db.collection(collection).doc(id).get()
+    return from(this.db.firestore.collection(collection).doc(id).get())
   }
 
 }

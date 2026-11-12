@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { FirebaseService } from '../firebase.service';
 import { Observable, Subject } from 'rxjs';
 import { ItemModel, CustomerModel } from '../master/master.model';
 
@@ -11,7 +11,7 @@ export class GenericLovService {
   private focusElementIndex: Subject<number> = new Subject<number>();
 
 
-  constructor(private db: AngularFirestore) {
+  constructor(private db: FirebaseService) {
     this.lovModalOpen = new Subject<[boolean, string, string, number]>()
   }
 
@@ -24,7 +24,7 @@ export class GenericLovService {
   }
 
   getAllItems(collection, field) {
-    return this.db.collection(collection).ref.orderBy(field).limit(100).get()
+    return this.db.firestore.collection(collection).orderBy(field).limit(100).get()
   }
 
   getLovItem(): Observable<[any, string,number]> {

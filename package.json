@@ -5,55 +5,62 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "test": "ng test --watch=false",
+    "lint": "eslint .",
+    "e2e": "playwright test",
+    "e2e:integration": "npm exec --yes --package firebase-tools@15.36.0 -- firebase emulators:exec --config firebase.e2e.json --project demo-inventory-upgrade --only auth,firestore \"playwright test --config playwright.integration.config.ts\"",
+    "build:release": "ng build --configuration production",
+    "verify": "npm run lint && npm test && npm run build"
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~7.1.0",
-    "@angular/common": "~7.1.0",
-    "@angular/compiler": "~7.1.0",
-    "@angular/core": "~7.1.0",
-    "@angular/forms": "~7.1.0",
-    "@angular/platform-browser": "~7.1.0",
-    "@angular/platform-browser-dynamic": "~7.1.0",
-    "@angular/router": "~7.1.0",
-    "@handsontable/angular": "^3.0.0",
-    "angular2-materialize": "^15.1.10",
-    "angularfire2": "^5.1.1",
-    "core-js": "^2.5.4",
-    "firebase": "^5.11.1",
-    "hammerjs": "^2.0.8",
-    "handsontable": "^6.2.2",
-    "html2canvas": "^1.0.0-alpha.12",
-    "jquery": "^2.2.4",
-    "jspdf": "^1.5.3",
-    "materialize-css": "^0.100.2",
-    "node-snackbar": "^0.1.15",
-    "rxjs": "~6.3.3",
-    "tslib": "^1.9.0",
-    "zone.js": "~0.8.26"
+    "@angular/animations": "22.2.6",
+    "@angular/common": "22.2.6",
+    "@angular/compiler": "22.2.6",
+    "@angular/core": "22.2.6",
+    "@angular/forms": "22.2.6",
+    "@angular/platform-browser": "22.2.6",
+    "@angular/router": "22.2.6",
+    "@materializecss/materialize": "2.4.0",
+    "firebase": "13.3.0",
+    "html2canvas": "1.4.1",
+    "jspdf": "4.2.1",
+    "rxjs": "7.8.2",
+    "tslib": "2.9.1",
+    "zone.js": "0.16.3",
+    "ag-grid-angular": "36.3.0",
+    "ag-grid-community": "36.3.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.13.7",
-    "@angular/cli": "~7.1.4",
-    "@angular/compiler-cli": "^7.2.11",
-    "@angular/language-service": "~7.1.0",
-    "@types/jasmine": "~2.8.8",
-    "@types/jasminewd2": "~2.0.3",
-    "@types/node": "~8.9.4",
-    "codelyzer": "~4.5.0",
-    "jasmine-core": "~2.99.1",
-    "jasmine-spec-reporter": "~4.2.1",
-    "karma": "~3.1.1",
-    "karma-chrome-launcher": "~2.2.0",
-    "karma-coverage-istanbul-reporter": "~2.0.1",
-    "karma-jasmine": "~1.1.2",
-    "karma-jasmine-html-reporter": "^0.2.2",
-    "protractor": "~5.4.0",
-    "ts-node": "~7.0.0",
-    "tslint": "~5.11.0",
-    "typescript": "~3.1.6"
+    "@angular/build": "22.2.6",
+    "@angular/cli": "22.2.6",
+    "@angular/compiler-cli": "22.2.6",
+    "@angular/language-service": "22.2.6",
+    "@playwright/test": "1.65.0",
+    "@types/node": "26.6.6",
+    "angular-eslint": "22.6.0",
+    "eslint": "10.14.0",
+    "jsdom": "31.0.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.2",
+    "vitest": "5.1.0"
+  },
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || ^26.0.0",
+    "npm": ">=10"
+  },
+  "overrides": {
+    "@firebase/firestore": {
+      "@grpc/grpc-js": "1.14.7"
+    },
+    "eslint": {
+      "minimatch": "11.0.8"
+    },
+    "@eslint/config-array": {
+      "minimatch": "11.0.8"
+    },
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "11.0.8"
+    }
   }
 }

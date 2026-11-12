@@ -1,6 +1,7 @@
+import { from } from 'rxjs';
 import { CustomerModel } from 'src/app/master/master.model';
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { FirebaseService } from '../firebase.service';
 import { ItemModel } from '../master/master.model';
 import { SalesDetailModel, SalesHeaderModel, PurchaseHeaderModel, PurchaseDetailModel, CashPaymentModel } from './transaction.model';
 
@@ -9,10 +10,10 @@ import { SalesDetailModel, SalesHeaderModel, PurchaseHeaderModel, PurchaseDetail
 })
 export class TransactionService {
 
-  constructor(private db: AngularFirestore) { }
+  constructor(private db: FirebaseService) { }
 
   addSalesHeader(value: SalesHeaderModel) {
-    return this.db.collection('salesheader').doc(value.id.toString()).set({
+    return this.db.firestore.collection('salesheader').doc(value.id.toString()).set({
       id: value.id,
       customerCode: value.customerCode,
       customerName: value.customerName,
@@ -32,7 +33,7 @@ export class TransactionService {
   }
 
   addPurchaseHeader(value: PurchaseHeaderModel) {
-    return this.db.collection('purchaseHeader').doc(value.id.toString()).set({
+    return this.db.firestore.collection('purchaseHeader').doc(value.id.toString()).set({
       id: value.id,
       supplierCode: value.supplierCode,
       supplierName: value.supplierName,
@@ -52,19 +53,19 @@ export class TransactionService {
   }
 
   updatePurchaseHeader(value: PurchaseHeaderModel) {
-    return this.db.collection('purchaseHeader').doc(value.id.toString()).update(value);
+    return this.db.firestore.collection('purchaseHeader').doc(value.id.toString()).update(value);
   }
 
   updateSalesHeader(value: SalesHeaderModel) {
-    return this.db.collection('salesheader').doc(value.id.toString()).update(value);
+    return this.db.firestore.collection('salesheader').doc(value.id.toString()).update(value);
   }
 
   deleteSalesHeader(value: SalesHeaderModel) {
-    return this.db.collection('salesheader').doc(value.id.toString()).delete();
+    return this.db.firestore.collection('salesheader').doc(value.id.toString()).delete();
   }
 
   deletePurcahseHeader(value: PurchaseHeaderModel) {
-    return this.db.collection('purchaseHeader').doc(value.id.toString()).delete();
+    return this.db.firestore.collection('purchaseHeader').doc(value.id.toString()).delete();
   }
 
   addSalesDetail(salesArray: SalesDetailModel[], id: string) {
@@ -72,7 +73,7 @@ export class TransactionService {
     let docs: any[] = []
     let index = 0
     salesArray.forEach(sale => {
-      docs[index] = this.db.collection("salesdetail").doc(id + (index + 1)).ref;
+      docs[index] = this.db.firestore.collection("salesdetail").doc(id + (index + 1));
       batch.set(docs[index], {
         id: +id,
         itemName: sale.itemName,
@@ -99,7 +100,7 @@ export class TransactionService {
   }
 
   updateSalesDetail(value: SalesDetailModel[], id: string) {
-    return this.db.collection('salesdetail').doc(id).update(value);
+    return this.db.firestore.collection('salesdetail').doc(id).update(value);
   }
 
   deleteSalesDetail(salesArray: SalesDetailModel[], id: string) {
@@ -107,7 +108,7 @@ export class TransactionService {
     let docs: any[] = []
     let index = 0
     salesArray.forEach(sale => {
-      docs[index] = this.db.collection("salesdetail").doc(id + (index + 1)).ref;
+      docs[index] = this.db.firestore.collection("salesdetail").doc(id + (index + 1));
       batch.delete(docs[index]);
       index++;
     })
@@ -119,7 +120,7 @@ export class TransactionService {
     let docs: any[] = []
     let index = 0
     purchaseArray.forEach(purchase => {
-      docs[index] = this.db.collection("purchaseDetail").doc(id + (index + 1)).ref;
+      docs[index] = this.db.firestore.collection("purchaseDetail").doc(id + (index + 1));
       batch.set(docs[index], {
         id: +id,
         itemName: purchase.itemName,
@@ -146,7 +147,7 @@ export class TransactionService {
   }
 
   updatePurchasesDetail(value: PurchaseDetailModel[], id: string) {
-    return this.db.collection('purchaseDetail').doc(id).update(value);
+    return this.db.firestore.collection('purchaseDetail').doc(id).update(value);
   }
 
   deletePurchaseDetail(purchaseArray: PurchaseDetailModel[], id: string) {
@@ -154,7 +155,7 @@ export class TransactionService {
     let docs: any[] = []
     let index = 0
     purchaseArray.forEach(purchase => {
-      docs[index] = this.db.collection("purchaseDetail").doc(id + (index + 1)).ref;
+      docs[index] = this.db.firestore.collection("purchaseDetail").doc(id + (index + 1));
       batch.delete(docs[index]);
       index++;
     })
@@ -165,7 +166,7 @@ export class TransactionService {
     let docs: any[] = []
     let index = 0
     itemArray.forEach(item => {
-      docs[index] = this.db.collection("itemmaster").doc(item.code.toString()).ref;
+      docs[index] = this.db.firestore.collection("itemmaster").doc(item.code.toString());
       batch.update(docs[index], {
         "unit": item.unit,
         "hsncode": item.hsncode,
@@ -184,26 +185,26 @@ export class TransactionService {
   }
 
   updateCustomerAmount(collection: string, id: string, amount: number) {
-    return this.db.collection(collection).doc(id)
+    return this.db.firestore.collection(collection).doc(id)
       .update({
         "amount": amount
       })
   }
 
   getHeaderDetails(collection, id) {
-    return this.db.collection(collection).doc(id).get()
+    return from(this.db.firestore.collection(collection).doc(id).get())
   }
 
   getTransactionDetails(collection, id) {
-    return this.db.collection(collection).ref.where("id", "==", +id).get()
+    return this.db.firestore.collection(collection).where("id", "==", +id).get()
   }
 
   getAllItems(collection, field) {
-    return this.db.collection(collection).ref.orderBy(field).get()
+    return this.db.firestore.collection(collection).orderBy(field).get()
   }
 
   addPayment(collection, value: CashPaymentModel) {
-    return this.db.collection(collection).doc(value.id.toString()).set({
+    return this.db.firestore.collection(collection).doc(value.id.toString()).set({
       id: value.id,
       code: value.code,
       name: value.name,

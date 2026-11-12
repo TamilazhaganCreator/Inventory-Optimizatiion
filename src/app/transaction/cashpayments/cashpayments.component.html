@@ -5,7 +5,7 @@
     </h5>
     <div class="row">
       <div class="col s3" style="margin-top: 1.75%;">
-        <select materialize="material_select" [value]="cashPayment.personType" (change)="setPersonType($event)">
+        <select materialize="material_select" [value]="cashPayment.personType ?? ''" (change)="setPersonType($event)">
           <option value="" disabled selected>Person Type </option>
           <option value="customer">Customer</option>
           <option value="supplier">Supplier</option>
@@ -32,7 +32,7 @@
     </div>
     <div class="row">
       <div class="col s3" style="margin-top: 1.75%;">
-        <select materialize="material_select" [value]="cashPayment.paymentType" (change)="setPaymentType($event)">
+        <select materialize="material_select" [value]="cashPayment.paymentType ?? ''" (change)="setPaymentType($event)">
           <option value="" disabled selected>Payment Type </option>
           <option value="cash">Cash</option>
           <option value="cheque">Cheque</option>

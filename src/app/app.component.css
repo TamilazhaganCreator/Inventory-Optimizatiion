@@ -78,8 +78,8 @@ a {
   text-transform: uppercase
 }
 
-li {
-  border-bottom: 1px solid #ccc;
+.dropdown-content > li {
+  border-bottom: 0;
 }
 
 

@@ -11,16 +11,16 @@
       <li *ngFor="let component of reportComponents"><a (click)="reportNavigate(component)">{{component}}</a>
       </li>
     </ul>
-    <nav>
+    <nav class="navbar">
       <div class="nav-wrapper" style="padding-right:1rem;padding-left:1rem;background-color: lightseagreen">
         <span class="pointer" style="font-size: 2rem;" (click)="backToHome()">Yugan Industries</span>
         <ul class="right hide-on-med-and-down">
-          <li><a class="dropdown-button" data-hover="true" data-belowOrigin="true" data-activates="dropdown1">Master<i
+          <li><a class="dropdown-trigger" materialize="dropdown" data-hover="true" data-belowOrigin="true" data-target="dropdown1">Master<i
                 class="material-icons right">arrow_drop_down</i></a></li>
-          <li><a class="dropdown-button" data-hover="true" data-belowOrigin="true"
-              data-activates="dropdown2">Transaction<i class="material-icons right">arrow_drop_down</i></a></li>
+          <li><a class="dropdown-trigger" materialize="dropdown" data-hover="true" data-belowOrigin="true"
+              data-target="dropdown2">Transaction<i class="material-icons right">arrow_drop_down</i></a></li>
           <!-- Dropdown Trigger -->
-          <li><a class="dropdown-button" data-hover="true" data-belowOrigin="true" data-activates="dropdown3">Reports<i
+          <li><a class="dropdown-trigger" materialize="dropdown" data-hover="true" data-belowOrigin="true" data-target="dropdown3">Reports<i
                 class="material-icons right">arrow_drop_down</i></a></li>
           <li><a (click)="logOut()">Logout</a></li>
         </ul>

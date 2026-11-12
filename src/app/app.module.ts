@@ -1,13 +1,8 @@
-import { NgModule } from '@angular/core';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { NgModule, provideZoneChangeDetection } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterializeModule } from 'angular2-materialize';
-import { AngularFireModule } from 'angularfire2';
-import { AngularFireAuthModule } from 'angularfire2/auth';
-import { AngularFireDatabaseModule } from 'angularfire2/database';
-import { environment } from '../environments/environment';
+import { MaterializeModule } from './ui/materialize.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GenericLovModule } from './genericlov/genericlov-module';
@@ -34,16 +29,13 @@ import { WelcomeComponent } from './welcome/welcome.component';
     AppRoutingModule,
     MaterializeModule,
     BrowserAnimationsModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFireDatabaseModule,
     ReactiveFormsModule,
-    AngularFirestoreModule,
     FormsModule,
     GenericLovModule,
     ToastModule,
-    AngularFireAuthModule
   ],
   providers: [
+    provideZoneChangeDetection(),
     GenericLovService,
     MasterService
   ],

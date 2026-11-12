@@ -139,3 +139,19 @@
   .pad-left-38{
     padding-left: 38% !important;
   }
+/* Keep each label/value pair on one row in html2canvas's layout engine. */
+#bill .bill-table-footer > .col.s5 {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  padding-left: 0;
+}
+#bill .bill-table-footer > .col.s5 > .col.s6 {
+  float: none;
+  flex: 0 0 50%;
+  width: 50%;
+  padding: 6px 4px;
+  line-height: 1.2;
+}
+#bill .bill-hdr h4 { clear: both; }
+#bill { background: white; }

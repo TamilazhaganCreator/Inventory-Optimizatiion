@@ -1,25 +1,19 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
 import { PersonwiseComponent } from './personwise.component';
+import { ReportModule } from '../report.module';
+import { testProviders } from '../../../testing/providers';
 
 describe('PersonwiseComponent', () => {
-  let component: PersonwiseComponent;
-  let fixture: ComponentFixture<PersonwiseComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ PersonwiseComponent ]
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(PersonwiseComponent);
-    component = fixture.componentInstance;
+  it('renders with the upgraded feature module', async () => {
+    await TestBed.configureTestingModule({
+      imports: [ReportModule],
+      providers: testProviders(),
+    }).compileComponents();
+    const fixture = TestBed.createComponent(PersonwiseComponent);
     fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    await new Promise(resolve => setTimeout(resolve, 160));
+    await fixture.whenStable();
+    expect(fixture.componentInstance).toBeTruthy();
+    expect(fixture.nativeElement.children.length).toBeGreaterThan(0);
   });
 });
