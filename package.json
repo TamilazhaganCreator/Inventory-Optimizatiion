@@ -23,7 +23,7 @@
     "angular2-materialize": "^15.1.10",
     "angularfire2": "^5.1.1",
     "core-js": "^2.5.4",
-    "firebase": "^5.7.1",
+    "firebase": "^5.11.1",
     "hammerjs": "^2.0.8",
     "handsontable": "^6.2.2",
     "html2canvas": "^1.0.0-alpha.12",
