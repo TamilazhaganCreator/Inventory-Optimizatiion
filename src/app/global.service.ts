@@ -1,7 +1,8 @@
+import { from } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { FirebaseService } from './firebase.service';
 import { Observable } from 'rxjs';
-import { Subject } from 'rxjs/internal/Subject';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,14 +14,14 @@ export class GlobalService {
   numberOnlyFormatRegex: RegExp = /^[0-9]*$/;
   numberwith2DecimalRegex: RegExp = /^\d{0,6}(?:\.\d{0,2})?$/;
   private toastShow = new Subject<[String, String, Boolean]>()
-  constructor(private db: AngularFirestore) { }
+  constructor(private db: FirebaseService) { }
 
   getLatestSerial() {
-    return this.db.collection("serialmaster").get()
+    return from(this.db.firestore.collection("serialmaster").get())
   }
 
   getLatestId(collection, field) {
-    return this.db.collection(collection).ref.orderBy(field, "desc").limit(1).get()
+    return this.db.firestore.collection(collection).orderBy(field, "desc").limit(1).get()
   }
   
   toLocaleDateString(date: Date): string {

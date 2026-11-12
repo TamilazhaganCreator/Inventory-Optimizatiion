@@ -1,3 +1,5 @@
+import { ColDef } from 'ag-grid-community';
+import { ChangeDetectionStrategy } from '@angular/core';
 import { ArrayAscSortPipe } from './../../utils/sortasc.pipe';
 import { Subscription } from 'rxjs';
 import { GenericLovService } from 'src/app/genericlov/genericlov.service';
@@ -5,7 +7,6 @@ import { CashPaymentModel } from './../../transaction/transaction.model';
 import { GlobalService } from './../../global.service';
 import { FilterModel } from './../report.model';
 import { Component, OnInit, EventEmitter } from '@angular/core';
-import { HotTableRegisterer } from '@handsontable/angular';
 import { ReportService } from '../report.service';
 import { TransactionReportModel } from 'src/app/transaction/transaction.model';
 import { CollapsibleMaterializeAction } from 'src/app/global.model';
@@ -13,6 +14,8 @@ import { CustomerModel } from 'src/app/master/master.model';
 import { Router } from '@angular/router';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-personwise',
   templateUrl: './personwise.component.html',
   styleUrls: ['./personwise.component.css']
@@ -37,66 +40,42 @@ export class PersonwiseComponent implements OnInit {
         }
       })
   }
-  private hotRegisterer = new HotTableRegisterer();
-  private transactionDetails = []
   filterCollapsible = new EventEmitter<string | CollapsibleMaterializeAction>();
   personType = null;
-  hotSettings: Handsontable.GridSettings = {
-    data: this.transactionDetails,
-    columns: [
-      {
-        data: 'invoiceDateString',
-        type: 'text',
-        className: "htCenter",
-        readOnly: true
-      }, {
-        data: 'invoiceNo',
-        type: 'text',
-        readOnly: true,
-        className: "htCenter"
-      },
-      {
-        data: 'customerName',
-        type: 'text',
-        readOnly: true
-      },
-      {
-        data: 'paymentTypeString',
-        type: 'numeric',
-        readOnly: true,
-        className: "htCenter"
-      },
-      {
-        data: 'paidAmt',
-        type: 'numeric',
-        readOnly: true
-      },
-      {
-        data: 'netAmt',
-        type: 'numeric',
-        readOnly: true
-      }
-    ],
-    rowHeaders: true,
-    colHeaders: [
-      'DATE',
-      ' INVOICE NO / NOTE',
-      'CUSTOMER NAME',
-      'PAYMENT TYPE',
-      'PAID AMOUNT',
-      'NET AMOUNT'
-    ],
-    filters: true,
-    height: 440,
-    stretchH: 'all',
-    rowHeights: 24,
-    contextMenu: [{
-      name: "View",
-      callback: (key, selection, clickEvent) => {
-        this.goToPurchasePage(selection[0].start.row)
-      }
-    }]
-  }
+  columns: ColDef[] = [
+    {
+        "field": "invoiceDateString",
+        "headerName": "DATE",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "invoiceNo",
+        "headerName": "INVOICE NO / NOTE",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "customerName",
+        "headerName": "CUSTOMER NAME",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "paymentTypeString",
+        "headerName": "PAYMENT TYPE",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "paidAmt",
+        "headerName": "PAID AMOUNT",
+        "type": "numericColumn",
+        "filter": "agNumberColumnFilter"
+    },
+    {
+        "field": "netAmt",
+        "headerName": "NET AMOUNT",
+        "type": "numericColumn",
+        "filter": "agNumberColumnFilter"
+    }
+];
 
   ngOnInit() {
   }
@@ -146,7 +125,11 @@ export class PersonwiseComponent implements OnInit {
     let transaction = this.personType == 'supplier' ? 'purchaseHeader' : 'salesheader'
     this.service.getFullTransactonWithRange(transaction, this.filter).then((res) => {
       res.forEach((doc) => {
-        let element = doc.data() as TransactionReportModel
+        let element = doc.data() as TransactionReportModel & { supplierCode?: number; supplierName?: string };
+        if (this.personType === 'supplier') {
+          element.customerCode = element.supplierCode;
+          element.customerName = element.supplierName;
+        }
         this.transactionArray.push(element)
       })
       this.transactionArray.forEach((element) => {
@@ -181,7 +164,7 @@ export class PersonwiseComponent implements OnInit {
         this.setTotalAmt();
         this.transactionArray = new ArrayAscSortPipe().transform(this.transactionArray, "timestamp")
         this.filterCollapsible.emit({ action: 'collapsible', params: ['close', 0] });
-        this.hotRegisterer.getInstance("hot").loadData(this.transactionArray);
+
         this.global.loader = false
       }).catch((e) => { })
       setTimeout(() => {
@@ -193,22 +176,22 @@ export class PersonwiseComponent implements OnInit {
   clearFilter() {
     this.filter = new FilterModel()
     this.transactionArray = []
-    this.hotRegisterer.getInstance("hot").loadData(this.transactionArray)
+
     this.setTotalAmt()
     this.filterCollapsible.emit({ action: 'collapsible', params: ['close', 0] });
     this.global.showToast("Filters cleared", "success", false)
   }
 
-  goToPurchasePage(index) {
-    if (this.transactionArray[index].invoiceNo.includes("PAYMENT")) {
+  goToPurchasePage(row: TransactionReportModel) {
+    if (row.id == null) {
       this.global.showToast("It's a payment record", "warning", false)
       return;
     }
     this.global.loader = true;
     if (this.personType == 'supplier') {
-      this.router.navigate(['../transaction/purchase'], { queryParams: { purchaseId: this.transactionArray[index].id } });
+      this.router.navigate(['../transaction/purchase'], { queryParams: { purchaseId: row.id } });
     } else {
-      this.router.navigate(['../transaction/sales'], { queryParams: { salesId: this.transactionArray[index].id } });
+      this.router.navigate(['../transaction/sales'], { queryParams: { salesId: row.id } });
     }
   }
 
@@ -218,6 +201,7 @@ export class PersonwiseComponent implements OnInit {
   }
 
   setTotalAmt() {
+    this.transactionArray = [...this.transactionArray];
     this.totalAmt = this.roundOff(this.transactionArray.map(t => t.netAmt).reduce((a, b) => a + b, 0))
     this.totalIncome = this.roundOff(this.transactionArray.map(t => t.paidAmt).reduce((a, b) => a + b, 0))
   }

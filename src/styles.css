@@ -1,4 +1,4 @@
-@import '~handsontable/dist/handsontable.full.css';
+@import './legacy-layout.css';
 .pad-both-2 {
   padding-left: 2rem !important;
   padding-right: 2rem !important;
@@ -183,11 +183,6 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
   padding-bottom: 3.6%;
 }
 
-.actives {
-  -webkit-transform: translateY(-14px) scale(0.8) !important;
-  transform: translateY(-14px) scale(0.8) !important;
-  -webkit-transform-origin: 0 0 !important;
-}
 
 .left-zero {
   left: 0 !important;
@@ -252,3 +247,9 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 }
+select[materialize="material_select"] { display: block; }
+
+.navbar .nav-wrapper { justify-content: space-between; }
+.dropdown-content { min-width: 160px; }
+
+.ag-cell.negative-balance { color: #c62828; }

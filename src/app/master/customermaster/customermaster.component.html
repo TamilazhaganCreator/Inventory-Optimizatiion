@@ -21,7 +21,7 @@
     <div class="row no-margin-bottom">
       <div class="col s6 nopad">
         <div class="input-field col s6" style="padding-left:1rem;">
-          <select materialize="material_select" tabindex="3" [(ngModel)]="customer.location">
+          <select materialize="material_select" tabindex="3" [ngModel]="customer.location ?? ''" (ngModelChange)="customer.location = $event">
             <option value="" disabled selected>Location type *</option>
             <option value="0">Local</option>
             <option value="1">Interstate</option>
@@ -43,7 +43,7 @@
       <div class="input-field col s6">
         <input id="landline" type="number" tabindex="6" [value]="customer.landline"
           (input)="checkNumberLength('landline',$event)">
-        <label for="phone-no" [ngClass]="{'actives': customer.landline != null}">Landline no</label>
+        <label for="landline" [ngClass]="{'actives': customer.landline != null}">Landline no</label>
       </div>
       <div class="input-field col s6">
         <input id="gst" type="text" maxlength="15" tabindex="7" minlength="15" [(ngModel)]="customer.gstNo">

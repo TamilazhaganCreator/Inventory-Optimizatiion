@@ -1,3 +1,4 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import { CustomerModel } from './../../master/master.model';
 import { Subscription } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
@@ -7,9 +8,10 @@ import { CashPaymentModel } from './../transaction.model';
 import { TransactionService } from './../transaction.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-cashpayments',
-  templateUrl: './cashpayments.component.html',
-  styleUrls: ['./cashpayments.component.css']
+  templateUrl: './cashpayments.component.html'
 })
 export class CashpaymentsComponent implements OnInit {
 

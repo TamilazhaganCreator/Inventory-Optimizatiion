@@ -1,9 +1,10 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, ElementRef, EventEmitter, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MaterializeAction } from 'angular2-materialize';
-import * as html2canvas from 'html2canvas';
-import * as jspdf from 'jspdf';
+import { MaterializeAction } from '../../ui/materialize.module';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 import { Subscription } from 'rxjs';
 import { GenericLovService } from 'src/app/genericlov/genericlov.service';
 import { GlobalService } from 'src/app/global.service';
@@ -14,6 +15,8 @@ import { UnitModel } from './../../master/master.model';
 import { MasterService } from './../../master/master.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-purchase',
   templateUrl: './purchase.component.html',
   styleUrls: ['../salestransaction/salestransaction.component.css'],
@@ -68,13 +71,13 @@ export class PurchaseComponent implements OnInit {
   @ViewChildren("itemCodeInputs") private itemCodeInputs: QueryList<any>;
   @ViewChildren("quantityInputs") private quantityInputs: QueryList<any>;
   @ViewChildren("unitInputs") private unitInputs: QueryList<any>;
-  @ViewChild("clearChqButton") private clearChqButton: ElementRef;
-  @ViewChild("saveChqButton") private saveChqButton: ElementRef;
-  @ViewChild("invoiceNoInput") private invoiceNoInput: ElementRef;
-  @ViewChild("custNameInput") private custNameInput: ElementRef;
-  @ViewChild("spInputs") private spInputs: QueryList<any>;
-  @ViewChild("otherChargesInput") private otherChargesInput: ElementRef;
-  @ViewChild("paidAmtInput") private paidAmtInput: ElementRef;
+  @ViewChild("clearChqButton", { static: false }) private clearChqButton: ElementRef;
+  @ViewChild("saveChqButton", { static: false }) private saveChqButton: ElementRef;
+  @ViewChild("invoiceNoInput", { static: false }) private invoiceNoInput: ElementRef;
+  @ViewChild("custNameInput", { static: false }) private custNameInput: ElementRef;
+  @ViewChild("spInputs", { static: false }) private spInputs: QueryList<any>;
+  @ViewChild("otherChargesInput", { static: false }) private otherChargesInput: ElementRef;
+  @ViewChild("paidAmtInput", { static: false }) private paidAmtInput: ElementRef;
   private alphaNumericRegex: RegExp = /^[a-zA-Z0-9\/._-]*$/
   private tenNumberWithTwoDigitsFormatRegex: RegExp = /^\d{0,10}(?:\.\d{0,2})?$/;
   billShow: boolean = false
@@ -134,6 +137,7 @@ export class PurchaseComponent implements OnInit {
               this.masterService.getItem("suppliermaster", temHeader.supplierCode.toString())
                 .subscribe((sup) => {
                   let supplier = sup.data() as CustomerModel
+                  temHeader.supplierAddress = supplier.address
                   temHeader.supplierGSTNo = supplier.gstNo
                   temHeader.supplierAmt = supplier.amount
                   this.service.getTransactionDetails("purchaseDetail", id)
@@ -684,11 +688,11 @@ export class PurchaseComponent implements OnInit {
     this.billShow = true
     setTimeout(() => {
       var data = document.getElementById('bill');
-      html2canvas(data).then(canvas => {
+      html2canvas(data, { scale: 2 }).then(canvas => {
         // Few necessary setting options
         const contentDataURL = canvas.toDataURL('image/png')
-        let pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF
-        pdf.addImage(contentDataURL, 'PNG', 0, 0)
+        let pdf = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
+        pdf.addImage(contentDataURL, 'PNG', 0, 0, 210, canvas.height * 210 / canvas.width)
         let date = this.purchaseHeader.invoiceDate.getDate() + "/" + (this.purchaseHeader.invoiceDate.getMonth() + 1) + "/" + this.purchaseHeader.invoiceDate.getFullYear()
         pdf.save("PURCHASE - " + this.purchaseHeader.supplierName + "- Invoice_No_" + this.purchaseHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
           this.billShow = false

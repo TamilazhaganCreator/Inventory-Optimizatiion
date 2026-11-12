@@ -1,25 +1,19 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
 import { CashpaymentsComponent } from './cashpayments.component';
+import { TransactionModule } from '../transaction.module';
+import { testProviders } from '../../../testing/providers';
 
 describe('CashpaymentsComponent', () => {
-  let component: CashpaymentsComponent;
-  let fixture: ComponentFixture<CashpaymentsComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ CashpaymentsComponent ]
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(CashpaymentsComponent);
-    component = fixture.componentInstance;
+  it('renders with the upgraded feature module', async () => {
+    await TestBed.configureTestingModule({
+      imports: [TransactionModule],
+      providers: testProviders(),
+    }).compileComponents();
+    const fixture = TestBed.createComponent(CashpaymentsComponent);
     fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    await new Promise(resolve => setTimeout(resolve, 160));
+    await fixture.whenStable();
+    expect(fixture.componentInstance).toBeTruthy();
+    expect(fixture.nativeElement.children.length).toBeGreaterThan(0);
   });
 });

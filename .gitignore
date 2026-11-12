@@ -41,3 +41,11 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Current Angular and Playwright caches/artifacts
+/.angular
+/playwright-report
+/test-results
+/firebase-debug.log
+/firestore-debug.log
+/ui-debug.log

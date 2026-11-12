@@ -1,3 +1,5 @@
+import { ColDef } from 'ag-grid-community';
+import { ChangeDetectionStrategy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CustomerModel } from './../../master/master.model';
 import { GenericLovService } from 'src/app/genericlov/genericlov.service';
@@ -6,11 +8,12 @@ import { GlobalService } from 'src/app/global.service';
 import { Component, OnInit, EventEmitter } from '@angular/core';
 import { ReportService } from '../report.service';
 import { FilterModel } from '../report.model';
-import { HotTableRegisterer } from '@handsontable/angular';
 import { CollapsibleMaterializeAction } from 'src/app/global.model';
 import { Router } from '@angular/router';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-purchasereport',
   templateUrl: './purchasereport.component.html',
   styleUrls: ['./purchasereport.component.css']
@@ -33,76 +36,52 @@ export class PurchaseReportComponent implements OnInit {
       min: this.filter.startDate
     }
   ];
-  private hotRegisterer = new HotTableRegisterer();
-  hotSettings: Handsontable.GridSettings = {
-    data: this.purchaseHeader,
-    columns: [
-      {
-        data: 'invoiceDateString',
-        type: 'text',
-        className: "htCenter",
-        readOnly: true
-      },
-      {
-        data: 'invoiceNo',
-        type: 'numeric',
-        readOnly: true,
-        className: "htCenter"
-      },
-      {
-        data: 'supplierCode',
-        type: 'numeric',
-        readOnly: true
-      },
-      {
-        data: 'supplierName',
-        type: 'text',
-        readOnly: true
-      },
-      {
-        data: 'paymentTypeString',
-        type: 'numeric',
-        readOnly: true,
-        className: "htCenter"
-      },
-      {
-        data: 'paidAmt',
-        type: 'numeric',
-        readOnly: true
-      },
-      {
-        data: 'netAmt',
-        type: 'numeric',
-        readOnly: true,
-      },
-      {
-        data: 'taxAmt',
-        type: 'numeric',
-        readOnly: true,
-      }
-    ],
-    rowHeaders: true,
-    colHeaders: [
-      'DATE',
-      ' INVOICE NO',
-      'SUPPLIER CODE',
-      'SUPPLIER NAME',
-      'PAYMENT TYPE',
-      'PAID AMOUNT',
-      'TOTAL AMOUNT',
-      'TAX AMOUNT'
-    ],
-    filters: true,
-    height: 440,
-    stretchH: 'all',
-    rowHeights: 24,
-    contextMenu: [{
-      name: "View",
-      callback: (key, selection, clickEvent) => {
-        this.goToPurchasePage(selection[0].start.row)
-      }
-    }]
-  };
+  columns: ColDef[] = [
+    {
+        "field": "invoiceDateString",
+        "headerName": "DATE",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "invoiceNo",
+        "headerName": "INVOICE NO",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "supplierCode",
+        "headerName": "SUPPLIER CODE",
+        "type": "numericColumn",
+        "filter": "agNumberColumnFilter"
+    },
+    {
+        "field": "supplierName",
+        "headerName": "SUPPLIER NAME",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "paymentTypeString",
+        "headerName": "PAYMENT TYPE",
+        "filter": "agTextColumnFilter"
+    },
+    {
+        "field": "paidAmt",
+        "headerName": "PAID AMOUNT",
+        "type": "numericColumn",
+        "filter": "agNumberColumnFilter"
+    },
+    {
+        "field": "netAmt",
+        "headerName": "TOTAL AMOUNT",
+        "type": "numericColumn",
+        "filter": "agNumberColumnFilter"
+    },
+    {
+        "field": "taxAmt",
+        "headerName": "TAX AMOUNT",
+        "type": "numericColumn",
+        "filter": "agNumberColumnFilter"
+    }
+  ];
 
   constructor(private global: GlobalService, private service: ReportService, private lovService: GenericLovService,
     private router: Router) {
@@ -116,9 +95,9 @@ export class PurchaseReportComponent implements OnInit {
       })
   }
 
-  goToPurchasePage(index) {
+  goToPurchasePage(row: PurchaseTransactionReportModel) {
     this.global.loader = true;
-    this.router.navigate(['../transaction/purchase'], { queryParams: { purchaseId: this.purchaseHeader[index].id } });
+    this.router.navigate(['../transaction/purchase'], { queryParams: { purchaseId: row.id } });
   }
 
   ngOnInit() {
@@ -147,7 +126,7 @@ export class PurchaseReportComponent implements OnInit {
         element.paymentTypeString = element.paymentType == 0 ? 'Credit' : element.paymentType == 1 ? "Cash" : "Cheque"
       })
       this.backupPurchaseHeader = this.purchaseHeader.map(d => Object.assign({}, d))
-      this.hotRegisterer.getInstance("hot").loadData(this.purchaseHeader);
+
       this.setTotalAmt()
       setTimeout(() => {
         this.global.loader = false
@@ -156,6 +135,7 @@ export class PurchaseReportComponent implements OnInit {
   }
 
   setTotalAmt() {
+    this.purchaseHeader = [...this.purchaseHeader];
     this.paidAmt = this.purchaseHeader.map(s => s.paidAmt).reduce((a, b) => a + b, 0)
     this.netAmt = this.roundOff(this.purchaseHeader.map(s => s.netAmt).reduce((a, b) => a + b, 0))
     this.taxAmt = this.roundOff(this.purchaseHeader.map(s => s.taxAmt).reduce((a, b) => a + b, 0))
@@ -204,7 +184,7 @@ export class PurchaseReportComponent implements OnInit {
     }
     this.filterCollapsible.emit({ action: 'collapsible', params: ['close', 0] });
     if (filtered) {
-      this.hotRegisterer.getInstance("hot").loadData(this.purchaseHeader);
+
       this.setTotalAmt()
       this.global.showToast("Filters applied", "success", false)
     }
@@ -213,7 +193,7 @@ export class PurchaseReportComponent implements OnInit {
   clearFilter() {
     this.filter = new FilterModel()
     this.purchaseHeader = this.backupPurchaseHeader
-    this.hotRegisterer.getInstance("hot").loadData(this.purchaseHeader)
+
     this.setTotalAmt()
     this.filterCollapsible.emit({ action: 'collapsible', params: ['close', 0] });
     this.global.showToast("Filters cleared", "success", false)

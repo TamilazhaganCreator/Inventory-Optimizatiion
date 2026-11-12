@@ -5,9 +5,9 @@ import { WelcomeComponent } from './welcome/welcome.component';
 
 const routes: Routes = [
   { path: '', component: WelcomeComponent },
-  { path: 'master', loadChildren: './master/master.module#MasterModule' },
-  { path: 'report', loadChildren: './reports/report.module#ReportModule' },
-  { path: 'transaction', loadChildren: './transaction/transaction.module#TransactionModule' },
+  { path: 'master', loadChildren: () => import('./master/master.module').then(m => m.MasterModule) },
+  { path: 'report', loadChildren: () => import('./reports/report.module').then(m => m.ReportModule) },
+  { path: 'transaction', loadChildren: () => import('./transaction/transaction.module').then(m => m.TransactionModule) },
   { path: '**', component: NoContentComponent }
 ];
 

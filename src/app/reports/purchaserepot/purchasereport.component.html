@@ -23,7 +23,7 @@
               <label for="name" [ngClass]="{'actives': filter.customerName}">Supplier Name</label>
             </div>
             <div class="input-field col s3 margin-top-0" style="padding-right:0">
-              <select materialize="material_select" [(ngModel)]="filter.paymentType">
+              <select materialize="material_select" [ngModel]="filter.paymentType ?? ''" (ngModelChange)="filter.paymentType = $event">
                 <option value="" disabled selected>Payment Type </option>
                 <option value="Credit">Credit</option>
                 <option value="Cash">Cash</option>
@@ -43,8 +43,7 @@
       </li>
     </ul>
   </div>
-  <hot-table [settings]="hotSettings" hotId="hot">
-  </hot-table>
+  <app-report-grid [rows]="purchaseHeader" [columns]="columns" [showView]="true" (view)="goToPurchasePage($event)"></app-report-grid>
 </div>
 <div class="row no-margin-bottom bg" id="footer-div">
   <div class="col s12 nopad valign-wrapper">

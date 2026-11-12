@@ -9,8 +9,8 @@
     </div>
   </div>
   <div class="row no-margin-bottom pad-both-search">
-    <div class="input-field col s12 nopad">
-      <i class="material-icons prefix" style="padding-left: .3em;padding-top: .3em;">search</i>
+    <div class="input-field col s12 nopad lov-search-field">
+      <i class="material-icons prefix" aria-hidden="true">search</i>
       <input autocomplete="off" #lovSearchTag id="item_icon_prefix" tabindex="1" type="text" (input)="filterLovDatas()"
         (keydown)="itemModalKeyActions($event)" class="validate no-margin-bottom" min="0" [(ngModel)]="searchWord">
       <label for="item_icon_prefix">Search</label>

@@ -1,3 +1,4 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -7,9 +8,10 @@ import { CustomerModel } from '../master.model';
 import { MasterService } from '../master.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-customermaster',
-  templateUrl: './customermaster.component.html',
-  styleUrls: ['./customermaster.component.css']
+  templateUrl: './customermaster.component.html'
 })
 export class CustomermasterComponent implements OnInit {
 
@@ -17,7 +19,7 @@ export class CustomermasterComponent implements OnInit {
   customer = new CustomerModel();
   private collectionName = "customermaster"
   masterName = "Customer"
-  @ViewChild("nameInput") private nameInput: ElementRef;
+  @ViewChild("nameInput", { static: false }) private nameInput: ElementRef;
 
   constructor(private router: Router, private global: GlobalService, private service: MasterService, private lovService: GenericLovService) {
     this.subscriptions[0] = this.lovService.getLovItem()

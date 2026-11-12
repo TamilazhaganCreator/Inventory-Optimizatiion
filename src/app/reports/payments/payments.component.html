@@ -7,7 +7,7 @@
         <div class="collapsible-body">
           <div class="row margin-bottom-10">
             <div class="input-field col s3 margin-top-0" style="padding-right:0">
-              <select materialize="material_select" [(ngModel)]="personType" (change)="resetName()">
+              <select materialize="material_select" [ngModel]="personType ?? ''" (ngModelChange)="personType = $event" (change)="resetName()">
                 <option value="" disabled selected>Person Type </option>
                 <option value="customer">Customer</option>
                 <option value="supplier">Supplier</option>
@@ -29,7 +29,7 @@
               <label for="name" [ngClass]="{'actives': filter.customerName}">Name</label>
             </div>
             <!-- <div class="input-field col s2 margin-top-0" style="padding-right:0">
-              <select materialize="material_select" [(ngModel)]="filter.paymentType">
+              <select materialize="material_select" [ngModel]="filter.paymentType ?? ''" (ngModelChange)="filter.paymentType = $event">
                 <option value="" disabled selected>Payment Type </option>
                 <option value="cash">Cash</option>
                 <option value="cheque">Cheque</option>
@@ -48,8 +48,7 @@
       </li>
     </ul>
   </div>
-  <hot-table [settings]="hotSettings" hotId="hot">
-  </hot-table>
+  <app-report-grid [rows]="paymentDetails" [columns]="columns"></app-report-grid>
 </div>
 <div class="row no-margin-bottom bg" id="footer-div">
   <div class="col s12 nopad valign-wrapper">

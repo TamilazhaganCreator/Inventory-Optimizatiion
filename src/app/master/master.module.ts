@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MaterializeModule } from 'angular2-materialize';
+import { MaterializeModule } from '../ui/materialize.module';
 import { GenericLovModule } from '../genericlov/genericlov-module';
 import { CustomermasterComponent } from './customermaster/customermaster.component';
 import { ItemmasterComponent } from './itemmaster/itemmaster.component';

@@ -1,25 +1,19 @@
+import { TestBed } from '@angular/core/testing';
 import { PurchaseReportComponent } from './purchasereport.component';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReportModule } from '../report.module';
+import { testProviders } from '../../../testing/providers';
 
-
-describe('SalesReportComponent', () => {
-  let component: PurchaseReportComponent;
-  let fixture: ComponentFixture<PurchaseReportComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ PurchaseReportComponent ]
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(PurchaseReportComponent);
-    component = fixture.componentInstance;
+describe('PurchaseReportComponent', () => {
+  it('renders with the upgraded feature module', async () => {
+    await TestBed.configureTestingModule({
+      imports: [ReportModule],
+      providers: testProviders(),
+    }).compileComponents();
+    const fixture = TestBed.createComponent(PurchaseReportComponent);
     fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    await new Promise(resolve => setTimeout(resolve, 160));
+    await fixture.whenStable();
+    expect(fixture.componentInstance).toBeTruthy();
+    expect(fixture.nativeElement.children.length).toBeGreaterThan(0);
   });
 });

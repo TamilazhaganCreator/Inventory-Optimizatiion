@@ -3,5 +3,5 @@ export class ManualAuditLovModel {
     lov_header: any[];
     header_width: number[] = [];
     table_content_width: number[] = [];
-    table_content: String[] = []
+    table_content: string[] = []
 }

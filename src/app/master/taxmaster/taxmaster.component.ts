@@ -1,3 +1,4 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { GenericLovService } from './../../genericlov/genericlov.service';
@@ -6,9 +7,11 @@ import { TaxModel } from './../master.model';
 import { MasterService } from './../master.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
   selector: 'app-taxmaster',
   templateUrl: './taxmaster.component.html',
-  styleUrls: ['./taxmaster.component.css', '../master.component.css']
+  styleUrls: ['../master.component.css']
 })
 export class TaxmasterComponent {
 
