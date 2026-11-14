@@ -20,6 +20,7 @@ export class TransactionService {
       invoiceNo: value.invoiceNo,
       invoiceDate: value.invoiceDate,
       paymentType: value.paymentType,
+      dispatchDetails: (value.dispatchDetails || "").trim(),
       chqNo: value.chqNo,
       chqDate: value.chqDate,
       chqBank: value.chqBank,

@@ -9,6 +9,7 @@ export class SalesHeaderModel {
     invoiceNo: string;
     invoiceDate: Date;
     paymentType: number;
+    dispatchDetails: string = "";
     chqNo: number = 0;
     chqDate: string = null;
     chqBank: string = "";

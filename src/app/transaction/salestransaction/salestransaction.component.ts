@@ -3,8 +3,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Component, ElementRef, EventEmitter, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MaterializeAction } from '../../ui/materialize.module';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
+import { createInvoicePdf } from '../invoice/invoice-pdf';
 import { Subscription } from 'rxjs';
 import { GenericLovService } from 'src/app/genericlov/genericlov.service';
 import { GlobalService } from 'src/app/global.service';
@@ -79,7 +78,7 @@ export class SalestransactionComponent implements OnInit {
   @ViewChild("custNameInput", { static: false }) private custNameInput: ElementRef;
   private alphaNumericRegex: RegExp = /^[a-zA-Z0-9\/._-]*$/
   private tenNumberWithTwoDigitsFormatRegex: RegExp = /^\d{0,10}(?:\.\d{0,2})?$/;
-  billShow: boolean = false
+  billShow: boolean = true
 
   constructor(private lovService: GenericLovService, private global: GlobalService, private service: TransactionService,
     private router: ActivatedRoute, private masterService: MasterService, private routerChange: Router) {
@@ -681,12 +680,9 @@ export class SalestransactionComponent implements OnInit {
     this.billShow = true
     setTimeout(() => {
       var data = document.getElementById('bill');
-      html2canvas(data, { scale: 2 }).then(canvas => {
-        const contentDataURL = canvas.toDataURL('image/png')
-        let pdf = new jsPDF('p', 'mm', 'a4'); // A4 size page of PDF
-        pdf.addImage(contentDataURL, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight())
+      createInvoicePdf(data).then(pdf => {
         let date = this.salesHeader.invoiceDate.getDate() + "/" + (this.salesHeader.invoiceDate.getMonth() + 1) + "/" + this.salesHeader.invoiceDate.getFullYear()
-        pdf.save("SALES - " + this.salesHeader.customerName + "- Invoice_no_" + this.salesHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
+        return pdf.save("SALES - " + this.salesHeader.customerName + "- Invoice_no_" + this.salesHeader.invoiceNo + " - [ " + date + " ]" + '.pdf', { returnPromise: true }).then(result => {
           this.billShow = false
           if (update) {
             this.resetSales()
@@ -698,6 +694,10 @@ export class SalestransactionComponent implements OnInit {
             this.routerChange.navigate(['/'])
           }
         })
+      }).catch(() => {
+        this.billShow = false;
+        this.global.loader = false;
+        this.global.showToast("Invoice could not be exported. Please try printing again.", "warning", false);
       });
     }, 100);
   }

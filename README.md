@@ -38,3 +38,16 @@ npm run build:release
 ```
 
 See [the dependency migration notes](DEPENDENCY_UPGRADE.md) for compatibility decisions and verification details.
+
+
+## Yugan invoice printing
+
+Sales and purchase invoices share the theme setting in
+`src/app/transaction/invoice/invoice.config.ts`:
+
+- `theme: 'monochrome'` (default): black text, light grey rules, and minimal ink coverage for black-and-white printers.
+- `theme: 'color'`: the navy-and-copper design, with the same information and A4 pagination.
+
+Change this one setting and rebuild to switch both invoice PDFs. Print at A4 / 100% scale.
+
+`factoryAddress` holds the clearly marked temporary factory/godown address; replace it with the actual address when available. `jurisdictionText` controls the optional commercial jurisdiction line; set it to `null` to omit it. Tax rows follow recorded invoice tax amounts. Local invoices show Tamil Nadu (33); interstate invoices use a recorded `placeOfSupply` when available and otherwise clearly flag that the destination state needs confirmation.

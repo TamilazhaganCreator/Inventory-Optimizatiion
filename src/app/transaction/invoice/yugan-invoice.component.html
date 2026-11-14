@@ -1,0 +1,100 @@
+<section class="yugan-page" [class.inv-color]="theme === 'color'" *ngFor="let lines of pages; let isLast = last">
+  <div class="inv-devotion">Sri Periyanayaki Amman Thunai</div>
+  <table class="inv-masthead" role="presentation"><tbody><tr>
+    <td class="inv-brand">
+      <h1>YUGAN INDUSTRIES</h1>
+      <p>Office: 8-F8, 8th Floor, Tower-8, Crown Residences,<br>Poonamallee High Road, Koyambedu, Chennai-600107</p>
+      <p class="inv-factory"><strong>Factory / Godown:</strong> {{config.factoryAddress}}</p>
+      <p class="inv-contact"><span class="inv-contact-phone">8015402264</span> <span class="inv-contact-separator">·</span> yuganindustriesofficial@gmail.com</p>
+      <!-- Retain the previous template's non-displayed contact/factory fields. -->
+      <span hidden>{{kind === 'sales' ? '9080537678' : '8015172264'}}</span>
+      <span hidden *ngIf="kind === 'purchase'">Factory: Madhavaram, Chennai-60</span>
+    </td>
+    <td class="inv-document">
+      <div class="inv-document-type">{{title}}</div>
+      <div class="inv-label">INVOICE NUMBER</div>
+      <strong class="inv-number">{{header.invoiceNo}}</strong>
+      <div class="inv-label inv-date-label">ISSUED ON</div>
+      <strong>{{header.invoiceDate | date:'dd MMM yyyy'}}</strong>
+    </td>
+  </tr></tbody></table>
+
+  <div class="inv-registration"><strong>GSTIN <span>33AYLPT2287K1ZT</span></strong><span>STATE CODE <b>33</b></span></div>
+
+  <table class="inv-parties" role="presentation"><tbody><tr>
+    <td class="inv-party">
+      <div class="inv-label">{{kind === 'sales' ? 'CUSTOMER DETAILS / BILL TO' : 'SUPPLIER DETAILS / PURCHASE FROM'}}</div>
+      <h2>{{partyName}}</h2>
+      <p class="inv-address">{{partyAddress || '—'}}</p>
+      <p class="inv-party-gstin">GSTIN <strong>{{partyGstin || '—'}}</strong></p>
+    </td>
+    <td class="inv-supply">
+      <div><span>Supply type</span><strong>{{kind === 'sales' ? 'GST sales' : 'GST purchase'}}</strong></div>
+      <div><span>Place of supply</span><strong>{{placeOfSupply}}</strong></div>
+      <div><span>Payment mode</span><strong>{{paymentType}}</strong></div>
+      <div class="inv-dispatch"><span>Dispatch details</span><strong>{{dispatchDetails}}</strong></div>
+    </td>
+  </tr></tbody></table>
+
+  <div class="inv-items-area">
+    <table class="inv-items" [class.inv-hide-last-item-border]="!config.showLastItemBorder">
+      <colgroup><col style="width:6%"><col style="width:38%"><col style="width:12%"><col style="width:7%"><col style="width:11%"><col style="width:10%"><col style="width:16%"></colgroup>
+      <thead><tr><th>No.</th><th>Description of goods</th><th>HSN code</th><th class="inv-numeric">Qty</th><th class="inv-numeric">Rate</th><th class="inv-numeric">Tax %</th><th class="inv-numeric">Amount</th></tr></thead>
+      <tbody><tr *ngFor="let line of lines" class="inv-item-row">
+        <td class="inv-line-number">{{line.number | number:'2.0-0'}}</td>
+        <td><strong class="inv-item-name">{{line.item.itemName}}</strong><small>Packing: {{line.item.quantity}} × {{line.item.unit}}</small></td>
+        <td>{{line.item.hsncode || '—'}}</td>
+        <td class="inv-numeric">{{line.item.totalUnit}}</td>
+        <td class="inv-numeric">{{line.item.sp | number:'1.0-0'}}</td>
+        <td class="inv-numeric inv-item-tax">{{itemTaxRate(line.item) | number:'1.0-2'}}%</td>
+        <td class="inv-numeric inv-item-amount">{{itemAmount(line.item) | number:'1.0-0'}}</td>
+      </tr></tbody>
+    </table>
+    <div class="inv-currency-note" *ngIf="config.showCurrencyNote">INR · Amounts rounded to the nearest rupee <span>{{validItems.length}} line {{validItems.length === 1 ? 'item' : 'items'}} in this invoice</span></div>
+  </div>
+
+  <ng-container *ngIf="isLast; else continuation">
+    <table class="inv-settlement" role="presentation"><tbody><tr>
+      <td class="inv-notes">
+        <div class="inv-label">AMOUNT IN WORDS</div>
+        <p class="inv-amount-words">{{header.netAmt | numberToWords}} only</p>
+        <div class="inv-payment" *ngIf="header.paidAmt != null"><span>Amount paid <strong>INR {{header.paidAmt | number:'1.0-0'}}</strong></span><span>Balance <strong>INR {{balance | number:'1.0-0'}}</strong></span></div>
+        <div class="inv-cheque" *ngIf="header.paymentType == 2">
+          Cheque: {{header.chqNo || '—'}} · {{header.chqBank || '—'}}<br>
+          Date: {{header.chqDate ? (header.chqDate | date:'dd MMM yyyy') : '—'}} · Amount: {{header.chqAmt | number:'1.0-0'}}
+        </div>
+      </td>
+      <td class="inv-totals-cell"><table class="inv-totals"><tbody>
+        <tr><th>Subtotal</th><td>{{subtotal | number:'1.0-0'}}</td></tr>
+        <tr *ngFor="let tax of taxes"><th>{{tax.label}}</th><td>{{tax.amount | number:'1.0-0'}}</td></tr>
+        <tr><th>Other charges</th><td>{{header.otherCharges || 0 | number:'1.0-0'}}</td></tr>
+        <tr class="inv-round-off"><th>Round off</th><td>{{roundOff | number:'1.0-0'}}</td></tr>
+        <tr class="inv-grand-total"><th>Total with tax <small>INR</small></th><td>{{roundedTotal | number:'1.0-0'}}</td></tr>
+      </tbody></table>
+
+      </td>
+    </tr></tbody></table>
+
+
+    <table class="inv-bank-signature" role="presentation"><tbody><tr>
+      <td class="inv-bank">
+        <div class="inv-label">BANK DETAILS</div>
+        <table><tbody>
+          <tr><th>Account holder</th><td>Yugan Industries</td></tr>
+          <tr><th>Bank</th><td>HDFC Bank</td></tr>
+          <tr><th>Branch</th><td>Koyambedu, Chennai</td></tr>
+          <tr><th>Account number</th><td class="inv-account">50200119735353</td></tr>
+          <tr><th>IFSC code</th><td>HDFC0005555</td></tr>
+        </tbody></table>
+      </td>
+      <td class="inv-signature"><strong>For YUGAN INDUSTRIES</strong><div class="inv-signature-space"></div><span>Authorised signatory</span></td>
+    </tr></tbody></table>
+
+    <div class="inv-terms"><div class="inv-label">TERMS &amp; CONDITIONS</div>
+      <p>1. Interest @24% P.A. will be charged immediately after the due date.<br>
+      2. Our risk and responsibility cease after delivery of the goods.<br>
+      3. Goods once sold cannot be taken back or exchanged. <span *ngIf="config.jurisdictionText">&nbsp; 4. {{config.jurisdictionText}}</span></p>
+    </div>
+  </ng-container>
+  <ng-template #continuation><div class="inv-continuation">Continued on the next page. Invoice totals, bank details and terms appear on the final page.</div></ng-template>
+</section>

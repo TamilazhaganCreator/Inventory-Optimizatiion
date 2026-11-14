@@ -13,19 +13,19 @@
           <span style="width:10%" *ngIf="salesHeader.customerValid"><i class="material-icons gray pointer"
               (click)="clearCustomerDetails()">close</i></span>
         </div>
-        <div class="input-field col s3 margin-top-0">
+        <div class="input-field col s2 margin-top-0">
           <input autocomplete="off" #invoiceNoInput type="text" id="invoice-no" (input)="checkInvoiceNo($event)"
             [value]="salesHeader.invoiceNo?salesHeader.invoiceNo:''" [readOnly]="salesHeader.id">
           <label for="invoice-no"
             [ngClass]="{'actives': (salesHeader.invoiceNo != '' && salesHeader.invoiceNo != null)}">Invoice No</label>
         </div>
-        <div class="input-field col s3 margin-top-0">
+        <div class="input-field col s2 margin-top-0">
           <input autocomplete="off" id="invoice-date" type="text" class="datepicker" materialize="pickadate"
             [materializeParams]="invoiceDatePickerParams" [value]="salesHeader.invoiceDate | date:'dd/MM/yyyy'"
             (input)="setInvoiceDate($event)" [readOnly]="salesHeader.id">
           <label for="invoice-date" [ngClass]="{'actives': salesHeader.invoiceDate != null}">Invoice Date</label>
         </div>
-        <div class="col s3" *ngIf="paymentTypeShow && salesHeader.id == null">
+        <div class="col s2" *ngIf="paymentTypeShow && salesHeader.id == null">
           <select materialize="material_select" [value]="salesHeader.paymentType ?? ''" (change)="setPaymentType($event)">
             <option value="" disabled selected>Payment Type </option>
             <option value="0">Credit</option>
@@ -33,10 +33,15 @@
             <option value="2">Cheque</option>
           </select>
         </div>
-        <div class="input-field col s3 margin-top-0" *ngIf="salesHeader.id">
+        <div class="input-field col s2 margin-top-0" *ngIf="salesHeader.id">
           <input readOnly type="text" class="pointer" id="p-type" (click)="showChq()"
             [value]="salesHeader.paymentType == 0? 'Credit':salesHeader.paymentType == 1?'Cash':'Cheque'">
           <label for="p-type" class="active">Payment type</label>
+        </div>
+        <div class="input-field col s3 margin-top-0">
+          <input id="dispatch-details" type="text" autocomplete="off"
+            [(ngModel)]="salesHeader.dispatchDetails" [readOnly]="salesHeader.id">
+          <label for="dispatch-details" [ngClass]="{'active': salesHeader.dispatchDetails}">Dispatch details</label>
         </div>
       </div>
       <div class="row no-margin-bottom">
@@ -257,171 +262,4 @@
   </dialog>
 </div>
 <generic-lov></generic-lov>
-<div id="bill" class="invoice-a4" *ngIf="billShow">
-  <div class="row no-margin-bottom" style="border:1px solid black">
-    <div class="row no-margin-bottom center-align bill-hdr">
-      <div style="margin-top: .3rem;">
-        <div class="col s6 offset-s3" style="font-size:.75rem;margin-top:.4rem;">
-          Sri Periyanayaki Amman Thunai
-        </div>
-        <div class="col s3">
-          <div class="col s12 right-align valign-wrapper pad-left-38">
-            <i class="material-icons phone">phone</i>
-            8015402264</div>
-          <div style="visibility:hidden" class="col s12 right-align valign-wrapper pad-left-38">
-            <i class="material-icons phone">phone</i>
-            9080537678</div>
-        </div>
-      </div>
-      <h4 style="font-weight:bold;margin-top:0">Yugan Industries</h4>
-      <div>
-        Office: 8-F8, 8th Floor, Tower-8, Crown Residences, Poonamallee High Road
-      </div>
-      <div class="mb-1">
-        Koyambedu, Chennai-600107
-      </div>
-      <div>
-        Email: yuganindustriesofficial@gmail.com
-      </div>
-    </div>
-    <div class="row no-margin-bottom bill-sub-hdr "
-      style="font-weight:bold;border-top: 1px solid black;border-bottom: 1px solid black;">
-      <div class="col s3">
-        State Code
-      </div>
-      <div class="col s1 nopad">
-        <div class="col s6" style="border-left:1px solid black">
-          3
-        </div>
-        <div class="col s6" style="border-left:1px solid black">
-          3
-        </div>
-      </div>
-      <div class="col s4 center-align" style="border-left:1px solid black">
-        Sales Invoice
-      </div>
-      <div class="col s4 right-align" style="font-size:1rem;border-left:1px solid black">
-        GSTIN: 33EJIPS9041C1Z6
-      </div>
-    </div>
-    <div class="row no-margin-bottom bill-customer-dtl" style="border-bottom: 1px solid;">
-      <div class="col s6" style="padding: 8px;font-size:.95rem;">
-        <div style="font-weight:bold;font-size: .9rem;">Customer Details:</div>
-        <div>{{salesHeader.customerName}}</div>
-        <div>{{salesHeader.customerAddress}}</div>
-        <div style="font-weight:bold;font-size: .9rem;">GSTIN: {{salesHeader.customerGSTNo}}</div>
-      </div>
-      <div class="col s6" style="padding: 8px;border-left: 1px solid black;padding-bottom: 1.1rem;">
-        <div class="col s12">
-          <p class="para">Invoice No: {{salesHeader.invoiceNo}} </p>
-        </div>
-        <div class="col s7">Sales under from: GST sales</div>
-        <div class="col s5">Date: {{salesHeader.invoiceDate | date : 'dd/MM/yyyy'}}</div>
-        <div class="col s12">
-          <p class="para">Dispatch details :</p>
-        </div>
-        <div class="col s12">Place of supply: Chennai</div>
-      </div>
-    </div>
-    <div class="row no-margin-bottom center-align bill-table-hdr" style="border-bottom: 1px solid black;">
-      <div class="col s1" style="padding: 8px;">S.No.</div>
-      <div class="col s5" style="padding: 8px;border-left: 1px solid black">Description of Goods</div>
-      <div class="col s2" style="padding: 8px;border-left: 1px solid black">HSN Code</div>
-      <div class="col s4 nopad">
-        <div class="col s3" style="padding: 8px;border-left: 1px solid black">Qty</div>
-        <div class="col s3" style="padding: 8px;border-left: 1px solid black">Rate</div>
-        <div class="col s6" style="padding: 8px;border-left: 1px solid black">Total</div>
-      </div>
-    </div>
-    <div class="row center-align no-margin-bottom bill-items">
-      <div class="col s1 bill-dtl">
-        <div class="col s12 nopad bill-item-dtl" *ngFor="let item of salesDetails;let _index = index">
-          {{_index + 1}}
-          <br><span style="visibility: hidden">()</span>
-        </div>
-      </div>
-      <div class="col s5 left-align bill-dtl left-bdr">
-        <div class="col s12 nopad bill-item-dtl" style="text-transform: uppercase"
-          *ngFor="let item of salesDetails;let _index = index">
-          {{item.itemName}}
-          <br>( {{item.quantity}} X {{item.unit}} )
-        </div>
-      </div>
-      <div class="col s2 bill-dtl left-bdr">
-        <div class="col s12 nopad bill-item-dtl" *ngFor="let item of salesDetails;let _index = index">
-          {{item.hsncode}}
-          <br><span style="visibility: hidden">()</span>
-        </div>
-      </div>
-      <div class="col s4 nopad">
-        <div class="col s3 bill-dtl left-bdr">
-          <div class="col s12 nopad bill-item-dtl" *ngFor="let item of salesDetails;">
-            {{item.totalUnit}}
-            <br><span style="visibility: hidden">()</span>
-          </div>
-        </div>
-        <div class="col s3 bill-dtl left-bdr">
-          <div class="col s12 nopad bill-item-dtl" *ngFor="let item of salesDetails;let _index = index">
-            {{item.sp}}
-            <br><span style="visibility: hidden">()</span>
-          </div>
-        </div>
-        <div class="col s6 right-align bill-dtl left-bdr">
-          <div class="col s12 nopad bill-item-dtl" *ngFor="let item of salesDetails;let _index = index">
-            {{roundOff(item.netAmt - item.sgstAmt - item.cgstAmt - item.igstAmt)}}
-            <br><span style="visibility: hidden">()</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row no-margin-bottom bill-table-footer"
-      style="border-top: 1px solid black;border-bottom: 1px solid black;">
-      <div class="col s7" style="padding-top: 8px;padding-bottom: 8px">
-        <div style="padding-bottom:2%">Invoice amount in words: <span
-            style="font-weight: bold">{{salesHeader.netAmt | numberToWords}} only</span></div>
-        <div><u>Terms & Conditions</u></div>
-        <div>1.Interest @24% P.A will be charged immediately after the due date</div>
-        <div>2.Our risk responsibly ceases after delivery of the goods</div>
-        <div>3.Good once sold canot be taken back or exchanged</div>
-        <div>4.Subject to chennai jurisdiction</div>
-      </div>
-      <div class="col s5 center-align" style="padding-right:0">
-        <div class="col s6 total-left">Total </div>
-        <div class="col s6 right-align total-right">
-          {{roundOff(salesHeader.netAmt - salesHeader.taxAmt - salesHeader.otherCharges)}}</div>
-        <div class="col s6 total-left">CGST @ {{salesDetails[0].cgst_perc}}%</div>
-        <div class="col s6 right-align total-right">{{getCgstAmt()}}</div>
-        <div class="col s6 total-left">SGST @ {{salesDetails[0].sgst_perc}}%</div>
-        <div class="col s6 right-align total-right">{{getSgstAmt()}}</div>
-        <div class="col s6 total-left">IGST @ {{salesDetails[0].igst_perc}}%</div>
-        <div class="col s6 right-align total-right">{{getIgstAmt()}}</div>
-        <div class="col s6 total-left">Other Charges</div>
-        <div class="col s6 right-align total-right">{{salesHeader.otherCharges}}</div>
-        <div class="col s6 total">Total with tax</div>
-        <div class="col s6 right-align total">{{salesHeader.netAmt}}</div>
-      </div>
-    </div>
-    <div class="row no-margin-bottom bill-footer" style="padding:8px">
-      <div class="col s7 nopad" style="font-weight:bold">
-        <div><u>Bank Details</u></div>
-        <div class="col s3 nopad">A/C Name <span style="float:right">:</span> </div>
-        <div class="col s9">Yugan Industries</div>
-        <div class="col s3 nopad">Bank Name <span style="float:right">:</span> </div>
-        <div class="col s9">HDFC Bank</div>
-        <div class="col s3 nopad">Bank A/c No <span style="float:right">:</span> </div>
-        <div class="col s9">50200119735353</div>
-        <div class="col s3 nopad">IFSC Code<span style="float:right">:</span> </div>
-        <div class="col s9">HDFC0005555</div>
-        <div class="col s3 nopad">Branch <span style="float:right">:</span> </div>
-        <div class="col s9">Koyambedu, Chennai</div>
-      </div>
-      <div class="col s5 right-align">
-        <div>
-          <h5 style="font-size: 1.2rem;font-weight: bold"><span style="font-size:1rem;">For </span>Yugan Industries</h5>
-        </div>
-        <div style="    height: 3rem;"></div>
-        <div>Authorised signatory</div>
-      </div>
-    </div>
-  </div>
-</div>
+<app-yugan-invoice id="bill" *ngIf="billShow" [header]="salesHeader" [items]="salesDetails" kind="sales"></app-yugan-invoice>

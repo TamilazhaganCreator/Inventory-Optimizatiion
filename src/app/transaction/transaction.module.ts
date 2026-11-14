@@ -1,3 +1,4 @@
+import { YuganInvoiceComponent } from './invoice/yugan-invoice.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -22,7 +23,8 @@ import { CashpaymentsComponent } from './cashpayments/cashpayments.component';
     SalestransactionComponent,
     PurchaseComponent,
     NumberToWordsPipe,
-    CashpaymentsComponent
+    CashpaymentsComponent,
+    YuganInvoiceComponent
   ],
   providers: [
     TransactionService
